@@ -1,0 +1,79 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.image-container {
+  position: relative;
+  width: 95%;
+  height: 65vh;
+  overflow: hidden;
+  background: linear-gradient(45deg, #7676d6 0%, rgba(0, 0, 255, 0.2) 100%), url("https://www.enterarse.com/wp-content/uploads/2023/05/20200630_0001-antenas-de-telefonia-movil-un-riesgo-para-la-salud.png") center/cover no-repeat;
+  margin: 30px auto; /* Ajusté el margen superior para evitar que se superponga con la cabecera */
+  padding: 20px;
+}
+
+.content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;
+}
+
+h1 {
+  font-size: 3em;
+}
+
+p {
+  font-size: 1.5em;
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 2s forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Ajusta según tus preferencias para el espacio de la imagen y texto */
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dos columnas */
+  gap: 20px; /* Espacio entre elementos */
+}
+
+/* Estilo de la imagen en el primer grid */
+.image-section img {
+  width: 100%; /* La imagen ocupa todo el ancho del contenedor */
+  height: auto;
+}
+
+/* Estilo del segundo grid con imagen y texto */
+.text-image-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espacio entre elementos */
+}
+
+/* Estilo de la imagen encima del texto */
+.image-above-text img,
+.image-below-text img {
+  width: 100%; /* La imagen ocupa todo el ancho del contenedor */
+  height: auto;
+}
+
+/* Estilo del texto */
+.text-image-section h2,
+.text-image-section p {
+  font-size: 1em; /* Tamaño del texto */
+}

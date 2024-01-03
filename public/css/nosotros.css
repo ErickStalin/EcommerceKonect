@@ -1,0 +1,111 @@
+.seccion-1 {
+  display: flex;
+  margin-bottom: 20px;
+  border: 1px solid rgb(61, 62, 121);
+  height: 200px; /* Establecer una altura fija para los cuadros */
+  text-align: center; /* Centrar el contenido dentro de los cuadros */
+  justify-content: center;
+}
+
+.mitad-texto {
+  width: 50%;
+  background: linear-gradient(to right, #1a23a7, #ffffff);
+}
+
+.mitad-imagen {
+  width: 50%;
+}
+.seccion-2 {
+  display: flex;
+  gap: 60px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.cuadro-con-bordex {
+  border: 2px solid rgb(61, 62, 121);
+  padding: 20px;
+  width: 400px; /* Establecer un ancho fijo para los cuadros */
+  height: 200px; /* Establecer una altura fija para los cuadros */
+  text-align: center; /* Centrar el contenido dentro de los cuadros */
+}
+.cuadro-con-borde {
+  border: 2px solid rgb(61, 62, 121);
+  padding: 20px;
+}
+
+.seccion-3 {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.seccion-4 {
+  display: flex;
+  justify-content: left;
+  margin-bottom: 20px;
+}
+
+.grid-2x2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.grid-item {
+  border: 1px solid black;
+  padding: 20px;
+}
+.imagenes-container {
+  display: inline-block;
+  margin-right: 10px;
+}
+.imagenes-container img {
+  width: 20%; /* Ajusta el ancho de las imágenes para que ocupen el contenedor */
+  height: auto; /* Mantiene la proporción de la imagen */
+}
+.seccion-5 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40vh; /* Toma toda la altura de la ventana */
+  background: linear-gradient( #1a23a7, #ffffff);
+}
+
+.cuadro-exterior {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 80%;
+  max-width: 1200px; /* Tamaño máximo */
+  padding: 30px;
+}
+
+.cuadro-interior {
+  background-color: #676ba5; /* Color azul más claro */
+  flex: 1; /* Hace que ambos cuadros tengan el mismo tamaño */
+  max-width: 300px; /* Tamaño máximo de los cuadros interiores */
+  padding: 20px;
+  text-align: center;
+  margin: 10px;
+  border-radius: 10px; /* Ajusta los bordes de los cuadros */
+}
+
+.cuadro-interior:last-child {
+  cursor: pointer; /* Agrega un cursor señalando interactividad */
+}
+
+/* Agrega una transformación al segundo cuadro */
+.cuadro-interior:last-child:hover {
+  transform: scale(1.1); /* Escala el cuadro al hacer hover */
+}
+
+/* Estilo para la animación del texto al llegar a la sección */
+.aparecer {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.aparecer.mostrar {
+  opacity: 1;
+}

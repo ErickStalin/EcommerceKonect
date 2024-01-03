@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Headers</title>
+    <style>
+      /* Estilos para las cabeceras superior*/
+      .contact-info {
+        background-color: #f2f1ff;
+        color: #000000;
+        padding: 5px 0;
+        text-align: center;
+        height: 10px;
+      }
+
+      .contact-info p,
+      .contact-info .contact-icon img {
+        font-size: 14px;
+        margin: 5px 10px;
+        padding: 5px 10px;
+      }
+
+      .contact-info .contact-icon img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+      }
+
+      .contact-info .contact-icon {
+        display: inline-block;
+        margin: 0 5px;
+        opacity: 0.7;
+        transition: opacity 0.3s ease-in-out;
+      }
+
+      .contact-info .contact-icon:hover {
+        opacity: 1;
+      }
+
+      .separator {
+        margin: 0 5px;
+        color: #4240a8;
+        font-size: 18px;
+      }
+
+      .contact-info {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        text-align: center;
+        margin-top: 0;
+      }
+
+      .contact-header-pc {
+        display: block;
+        height: 50px;
+      }
+
+      /* Estilos para la versión móvil */
+      .contact-header-mobile {
+        display: none;
+      }
+
+      /* Versión móvil */
+      @media (max-width: 767px) {
+        .contact-header-pc {
+          display: none;
+        }
+
+        .contact-header-mobile {
+          display: block;
+          background-color: #f2f1ff;
+          color: #000000;
+          padding: 5px 0;
+          text-align: center;
+        }
+
+        .contact-header-mobile a {
+          display: block;
+          margin: 5px 0;
+          font-size: 14px;
+        }
+      }
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translate3d(0, -100%, 0);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      /* Estilo para la cabecera movible */
+      .sticky-header {
+        position: fixed;
+        top: 90px; /* Deja espacio para la cabecera de contacto */
+        left: 0;
+        right: 0;
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 40px 40px; /* Aumenta el espacio en la parte superior e inferior de la cabecera fija */
+        z-index: 1000;
+        animation: none;
+        opacity: 0;
+      }
+
+      .sticky-header .logo img {
+        max-height: 90px; /* Tamaño de la imagen del logo */
+      }
+
+      .sticky-header nav ul {
+        list-style: none;
+        display: flex;
+        margin: 0;
+        padding: 0;
+      }
+
+      .sticky-header nav ul li {
+        margin-right: 20px;
+        position: relative;
+      }
+
+      .sticky-header nav ul li a {
+        text-decoration: none;
+        color: #3f3f3f; /* Color del texto */
+        font-weight: 600;
+      }
+
+      /* Añadir espacio entre elementos del menú */
+      .sticky-header nav ul li:not(:last-child) {
+        margin-right: 100px; /* Ajusta el espacio entre elementos del menú */
+      }
+
+      /* Efecto de alzar al pasar el ratón */
+      .sticky-header nav ul li a:hover {
+        position: relative;
+        top: -4px; /* Levantar ligeramente */
+      }
+
+      /* Estilos para la versión móvil */
+      .menu-toggle {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+      }
+
+      .bar {
+        background-color: #333;
+        height: 4px;
+        width: 30px;
+        margin: 3px 0;
+      }
+
+      /* Versiones móviles */
+      @media (max-width: 767px) {
+        .sticky-header nav ul {
+          display: none;
+          flex-direction: column;
+          background-color: #ffffff;
+          position: absolute;
+          top: 70px; /* Espacio entre cabecera y menú */
+          left: 0;
+          right: 0;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          text-align: center;
+        }
+
+        .sticky-header.active nav ul {
+          display: flex;
+        }
+
+        .menu-toggle {
+          display: flex;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Cabecera completa para PC -->
+    <header class="contact-header-pc">
+      <div class="contact-info">
+        <a
+          class="contact-icon email"
+          href="mailto:comercial@konectsoluciones.com"
+          >Email: comercial@konectsoluciones.com</a
+        >
+        <span class="separator">|</span>
+        <a class="contact-item" data-hh-id="0" data-hh="telefono"
+          >PBX: + (593) (02) 512 - 5552</a
+        >
+        <span class="separator">|</span>
+        <a
+          class="contact-icon whatsapp"
+          data-hh-id="1"
+          data-hh="whatsapp"
+          href="https://wa.me/593995653148"
+          title="0995653148"
+        >
+          <img
+            src="https://w7.pngwing.com/pngs/535/813/png-transparent-call-icon-logo-whatsapp-computer-icons-viber-text-viber-area.png"
+            alt="WhatsApp"
+          />
+        </a>
+        <span class="separator">|</span>
+        <a
+          class="contact-icon facebook"
+          data-hh-id="2"
+          data-hh="facebook"
+          href="https://www.facebook.com/konectsoluciones/"
+          title="Konect CIA. LTDA"
+        >
+          <img
+            src="https://w7.pngwing.com/pngs/561/460/png-transparent-fb-facebook-facebook-logo-social-media-icon.png"
+            alt="Facebook"
+          />
+        </a>
+        <span class="separator">|</span>
+        <a
+          class="contact-icon instagram"
+          data-hh-id="3"
+          data-hh="instagram"
+          href="https://www.instagram.com/konect_cia_ltda/"
+          title="konect_cia_ltda"
+        >
+          <img
+            src="https://w7.pngwing.com/pngs/83/597/png-transparent-social-media-sonus-faber-s-p-a-computer-icons-instagram-neon-purple-violet-text.png"
+            alt="Instagram"
+          />
+        </a>
+      </div>
+    </header>
+
+    <!-- Cabecera para dispositivos móviles -->
+    <header class="contact-header-mobile">
+      <a class="contact-icon email" href="mailto:comercial@konectsoluciones.com"
+        >Email: comercial@konectsoluciones.com</a
+      >
+    </header>
+
+    <!-- Cabecera movible -->
+    <header class="sticky-header">
+      <div class="logo">
+        <img
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRl-846hFCp_pqrXPSz0l0RqEtEOzeUkhWyFDoeM-6x&s"
+          alt="Logo de la empresa"
+          height="300"
+          width="300"
+        />
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#inicio">Inicio</a></li>
+          <li><a href="#productos">Productos</a></li>
+          <li><a href="/contacto">Contacto</a></li>
+          <li><a href="/nosotros">Nosotros</a></li>
+        </ul>
+      </nav>
+      <div class="menu-toggle">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+    </header>
+    <script>
+      // Script encargado del movimiento de la cabecera
+      const contactHeader = document.querySelector(".contact-header-pc");
+      const stickyHeader = document.querySelector(".sticky-header");
+
+      let isSticky = false;
+
+      window.addEventListener("scroll", () => {
+        const contactHeaderHeight = contactHeader.clientHeight;
+
+        if (window.scrollY > contactHeaderHeight) {
+          if (!isSticky) {
+            stickyHeader.style.position = "fixed";
+            stickyHeader.style.top = "0";
+            isSticky = true;
+          }
+        } else {
+          stickyHeader.style.position = "relative";
+          isSticky = false;
+        }
+      });
+    </script>
+
+    <script>
+      // Script para la cabecera móvil
+      const menuToggle = document.querySelector(".menu-toggle");
+      const header = document.querySelector(".sticky-header");
+
+      menuToggle.addEventListener("click", () => {
+        header.classList.toggle("active");
+      });
+
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 100) {
+          header.style.backgroundColor = "#FFFFFF";
+        } else {
+          header.style.backgroundColor = "#ffffff";
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+/* Estilos básicos para el carrito */
+body {
+  font-family: Arial, sans-serif;
+}
+
+#carrito {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-top: 20px;
+}

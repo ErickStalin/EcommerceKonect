@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Detalles del Producto</title>
+  <link rel="stylesheet" href="../css/detalles.css">
+</head>
+<body>
+  <button id="carritoBtn">Carrito</button> 
+  <div class="product-container">
+    <div class="product-details">
+      <div class="product-info">
+        <img class="productImage" src="https://res.cloudinary.com/dyrzihnrx/image/upload/{{producto.Imagenes}}" alt="Imagen del Producto">
+      </div>
+      <div class="product-details-info">
+        <h2 id="nombreProducto">{{ producto.Nombre }}</h2>
+        <p><strong>Categoría:</strong> {{ producto.Categoria }}</p>
+        <p><strong>Existencia:</strong> {{ producto.Existencia }}</p>
+        <p><strong>Precio:</strong> <span id="precioProducto">{{ producto.Precio }}</span></p>
+        <p style="display: none;"><strong>Código del Producto:</strong> <span id="codigoProducto">{{ producto.CodigoProducto }}</span></p>
+        <label for="cantidad"><strong>Cantidad:</strong></label>
+        <input type="number" id="cantidad" name="cantidad" min="1" value="1">
+        <button id="agregarCarrito" onclick="agregarAlCarrito('{{ producto.CodigoProducto }}')">Agregar al Carrito</button>
+      </div>
+    </div>
+    <div class="Descripcion">
+      <p><strong>Descripción:</strong></p>
+      <p>{{ producto.Descripcion }}</p>
+    </div>
+  </div>
+  
+  <script src="../js/detalles.js"></script>
+</body>/
+</html>

@@ -2,17 +2,24 @@ const exphbs = require("express-handlebars");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
+const nodemailer = require("nodemailer");
 const cors = require("cors");
 const cloudinary = require("cloudinary").v2;
-
+let productosEnCarrito = [];
 const app = express();
+require("dotenv").config();
+const transporter = require("./helpers/mailer");
+const path = require('path');
+const fs = require('fs');
 
 // Configuración de Handlebars
 const hbs = exphbs.create({ extname: "hbs", defaultLayout: "layout" });
 app.set("view engine", "hbs");
 
 // Carpeta de archivos estáticos
-app.use(express.static(__dirname + "/public"));
+app.use(
+  express.static(__dirname + "/public", { extensions: ["html", "css", "js"] })
+);
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -96,8 +103,62 @@ app.get("/detalles_producto/:id", (req, res) => {
   });
 });
 
-app.get('/carrito', (req, res) => {
-  res.render('carrito');
+app.get("/carrito", (req, res) => {
+  res.render("carrito");
+});
+
+app.post("/enviar-factura", async (req, res) => {
+  const { nombre, direccion, correo } = req.body;
+
+  // Configuración del transporte para nodemailer
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, // upgrade later with STARTTLS
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  // Contenido del correo
+  const mailOptions = {
+    from: `Konect Soluciones: ${process.env.EMAIL}`,
+    to: correo,
+    subject: "Factura de compra",
+    text: `Hola ${nombre}, adjuntamos la factura de tu compra. Gracias por tu compra.`,
+    // Puedes adjuntar archivos, HTML, etc., según tus necesidades
+  };
+
+  // Enviar el correo electrónico
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Error al enviar el correo:", error);
+      res
+        .status(500)
+        .json({ message: "Error al enviar la factura por correo electrónico" });
+    } else {
+      console.log("Correo enviado:", info.response);
+      res
+        .status(200)
+        .json({
+          message: "Factura enviada exitosamente por correo electrónico",
+        });
+    }
+  });
+});
+
+app.get('/confirmacion', (req, res) => {
+  const filePath = path.join(__dirname, 'public', 'ok.html');
+
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error al cargar la página de confirmación');
+    } else {
+      res.send(data);
+    }
+  });
 });
 
 const PORT = process.env.PORT || 3000;

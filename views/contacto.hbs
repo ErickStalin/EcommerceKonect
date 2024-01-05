@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -7,9 +6,8 @@
   </head>
   <body>
     <script>
-      fetch('header.html').then(response => response.text()).then(data => {
-        document.querySelector('body').insertAdjacentHTML('afterbegin', data);
-      });
+      fetch('header.html') .then(response => response.text()) .then(data => {
+      document.querySelector('body').insertAdjacentHTML('afterbegin', data); });
     </script>
 
     <!-- Sección Principal -->
@@ -28,21 +26,28 @@
     <div class="grid-container">
       <!-- Primer grid con imagen grande -->
       <div class="image-section" style="margin-top: -40px;">
-        <a href="https://etapainfantil.com/wp-content/uploads/2015/11/pangea.jpg.webp" target="_blank">
-          <img src="https://etapainfantil.com/wp-content/uploads/2015/11/pangea.jpg.webp" alt="Imagen para Google Maps">
+        <a
+          href="https://etapainfantil.com/wp-content/uploads/2015/11/pangea.jpg.webp"
+          target="_blank"
+        >
+          <img
+            src="https://etapainfantil.com/wp-content/uploads/2015/11/pangea.jpg.webp"
+            alt="Imagen para Google Maps"
+          />
         </a>
       </div>
       <!-- Segundo grid con imagen y texto -->
       <div class="text-image-section">
         <!-- Imagen 2 -->
         <div class="image-above-text">
-          <img src="URL_DE_IMAGEN_ENCIMA" alt="Imagen encima del texto">
+          <img src="URL_DE_IMAGEN_ENCIMA" alt="Imagen encima del texto" />
           <h2 style="font-size: 1.2em;">Visita Nuestras Oficinas</h2>
-          <p style="font-size: 1em;">SOLUCIONES TECNOLOGICAS KONECT CIA. LTDA., Edificio Leiva Gallegos, Av. El Inca, y, Quito 170138.</p>
+          <p style="font-size: 1em;">SOLUCIONES TECNOLOGICAS KONECT CIA. LTDA.,
+            Edificio Leiva Gallegos, Av. El Inca, y, Quito 170138.</p>
         </div>
         <!-- Imagen 3 -->
         <div class="image-below-text">
-          <img src="URL_DE_IMAGEN_DEBAJO" alt="Imagen debajo del texto">
+          <img src="URL_DE_IMAGEN_DEBAJO" alt="Imagen debajo del texto" />
           <h2 style="font-size: 1.2em;">Horario De Atención</h2>
           <p style="font-size: 1em;">Lunes a Viernes de 09H00 a 18h00.</p>
         </div>
@@ -52,3 +57,4 @@
     <script src="js/contacto.js"></script>
   </body>
 </html>
+

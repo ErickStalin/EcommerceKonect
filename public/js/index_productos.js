@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const itemsPerPage = 16;
   let currentPage = 1;
   let productos = [];
+  let productosEnCarrito = [];
   let currentCategoriaFiltro = "Todas";
 
   function showProductsOnPage(page, categoriaFiltro) {

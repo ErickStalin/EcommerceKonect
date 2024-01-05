@@ -1,7 +1,7 @@
 /* Script encargado del movimiento de la cabecera */
 const contactHeader = document.querySelector(".contact-header-pc");
 const stickyHeader = document.querySelector(".sticky-header");
-
+let productosEnCarrito = [];
 let isSticky = false;
 
 window.addEventListener("scroll", () => {

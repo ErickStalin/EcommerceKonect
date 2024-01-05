@@ -1,18 +1,61 @@
 window.onload = () => {
-  const cantidad = localStorage.getItem('cantidadCarrito');
-  const nombreProducto = localStorage.getItem('nombreProductoCarrito');
-  const precioProducto = localStorage.getItem('precioProductoCarrito');
+  const carritoContainer = document.getElementById('carrito');
+  let productosEnCarrito = localStorage.getItem('productosEnCarrito');
+  productosEnCarrito = productosEnCarrito ? JSON.parse(productosEnCarrito) : [];
 
-  if (cantidad !== null && nombreProducto !== null && precioProducto !== null) {
-    const carritoContainer = document.getElementById('carrito');
+  let totalAPagar = 0;
 
-    const cantidadElement = document.createElement('p');
-    cantidadElement.textContent = `Cantidad en el carrito: ${cantidad}`;
+  if (productosEnCarrito.length > 0) {
+    productosEnCarrito.forEach(producto => {
+      const productoElement = document.createElement('p');
+      productoElement.textContent = `Nombre: ${producto.nombre}, Precio: ${producto.precio}, Cantidad: ${producto.cantidad}`;
+      carritoContainer.appendChild(productoElement);
 
-    const productoInfoElement = document.createElement('p');
-    productoInfoElement.textContent = `Producto: ${nombreProducto}, Precio: ${precioProducto}`;
-
-    carritoContainer.appendChild(cantidadElement);
-    carritoContainer.appendChild(productoInfoElement);
+      totalAPagar += parseFloat(producto.precio) * parseInt(producto.cantidad);
+    });
+  } else {
+    const emptyCartMessage = document.createElement('p');
+    emptyCartMessage.textContent = 'El carrito está vacío';
+    carritoContainer.appendChild(emptyCartMessage);
   }
+
+  const totalAPagarElement = document.getElementById('totalAPagar');
+  totalAPagarElement.textContent = `Total a Pagar: $${totalAPagar.toFixed(2)}`;
+
+  const pagarAhoraBtn = document.getElementById('pagarAhora');
+  const formularioFactura = document.getElementById('formularioFactura');
+
+  pagarAhoraBtn.addEventListener('click', () => {
+    formularioFactura.style.display = 'block';
+
+    const datosFacturaForm = document.getElementById('datosFacturaForm');
+    datosFacturaForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const nombre = document.getElementById('nombre').value;
+      const direccion = document.getElementById('direccion').value;
+      const correo = document.getElementById('correo').value;
+
+      try {
+        const response = await fetch('/enviar-factura', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nombre, direccion, correo })
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al enviar la factura');
+        }
+
+        alert('Factura enviada por correo electrónico.');
+        localStorage.removeItem('productosEnCarrito');
+        window.location.href = '/confirmacion';
+      } catch (error) {
+        console.error(error);
+        alert('Hubo un error al enviar la factura');
+      }
+    });
+  });
 };

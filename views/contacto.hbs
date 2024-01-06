@@ -1,60 +1,95 @@
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Contacto</title>
-    <link rel="stylesheet" href="css/contacto.css" />
-  </head>
-  <body>
-    <script>
-      fetch('header.html') .then(response => response.text()) .then(data => {
-      document.querySelector('body').insertAdjacentHTML('afterbegin', data); });
-    </script>
+<head>
+  <meta charset="UTF-8" />
+  <title>Contacto</title>
+  <link rel="stylesheet" href="css/contacto.css" />
+</head>
+<body>
+  <!-- Contenedor donde se cargará el header.html -->
+  <div id="header-container"></div>
 
-    <!-- Sección Principal -->
-    <div class="image-container" style="font-size: 1.5em;">
-      <div class="wave-effect"></div>
-      <div class="content">
-        <h1 class="fade-in">¿Necesitas ayuda?</h1>
-        <p class="fade-in">En KONECT estamos pendientes para resolver cualquier
-          inquietud o duda y ayudarte a tomar la mejor decisión en el ámbito
-          tecnológico.</p>
-      </div>
+  <script>
+    function loadHeader() {
+      fetch('header.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('header-container').innerHTML = data;
+      })
+      .catch(error => {
+        console.error('Error al cargar el header:', error);
+      });
+    }
+
+    function initMap() {
+      // Función de inicialización del mapa
+      const myLatLng = { lat: -34.603722, lng: -58.381592 }; // Coordenadas de ejemplo
+
+      // Crea un nuevo mapa con la configuración inicial
+      const map = new google.maps.Map(document.getElementById('map'), {
+        center: myLatLng,
+        zoom: 12
+      });
+
+      // Puedes añadir marcadores, polilíneas, etc., aquí dentro del callback
+    }
+
+    function loadGoogleMapsScript() {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyD6IS7KLSSkyVeI0VXhe8lRYglhLQkV4hk&callback=initMap`;
+      script.defer = true;
+
+      script.onerror = function(error) {
+        console.error("Error al cargar la API de Google Maps:", error);
+      };
+
+      document.head.appendChild(script);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadHeader(); // Cargar el header al cargar la página
+      loadGoogleMapsScript(); // Cargar Google Maps
+    });
+  </script>
+
+  <!-- Sección Principal -->
+  <div class="image-container" style="font-size: 1.5em;">
+    <div class="wave-effect"></div>
+    <div class="content">
+      <h1 class="fade-in">¿Necesitas ayuda?</h1>
+      <p class="fade-in">En KONECT estamos pendientes para resolver cualquier
+        inquietud o duda y ayudarte a tomar la mejor decisión en el ámbito
+        tecnológico.</p>
     </div>
-    <div class="redes-container"></div>
-
-    <!-- Sección 2 con Cuadrícula (Grid) -->
-    <div class="grid-container">
-      <!-- Primer grid con imagen grande -->
-      <div class="image-section" style="margin-top: -40px;">
-        <a
-          href="https://etapainfantil.com/wp-content/uploads/2015/11/pangea.jpg.webp"
-          target="_blank"
-        >
-          <img
-            src="https://etapainfantil.com/wp-content/uploads/2015/11/pangea.jpg.webp"
-            alt="Imagen para Google Maps"
-          />
-        </a>
-      </div>
-      <!-- Segundo grid con imagen y texto -->
-      <div class="text-image-section">
-        <!-- Imagen 2 -->
-        <div class="image-above-text">
-          <img src="URL_DE_IMAGEN_ENCIMA" alt="Imagen encima del texto" />
-          <h2 style="font-size: 1.2em;">Visita Nuestras Oficinas</h2>
-          <p style="font-size: 1em;">SOLUCIONES TECNOLOGICAS KONECT CIA. LTDA.,
-            Edificio Leiva Gallegos, Av. El Inca, y, Quito 170138.</p>
-        </div>
-        <!-- Imagen 3 -->
-        <div class="image-below-text">
-          <img src="URL_DE_IMAGEN_DEBAJO" alt="Imagen debajo del texto" />
-          <h2 style="font-size: 1.2em;">Horario De Atención</h2>
-          <p style="font-size: 1em;">Lunes a Viernes de 09H00 a 18h00.</p>
-        </div>
-      </div>
+  </div>
+  <div class="spacer"></div>
+  <div class="acordion-container">
+    <div class="acordion">
+      <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*vxjAHkrXbGG6gOiPZgjeZA.jpeg" alt="Imagen 1" />
+      <img src="https://www.eltiempo.com/files/article_main/uploads/2019/12/07/5dec47012d257.jpeg" alt="Imagen 2" />
+      <img src="https://humanidades.com/wp-content/uploads/2019/02/tecnologia-1-e1585519785709.jpg" alt="Imagen 3" />
+      <!-- Agrega todas las imágenes que desees -->
     </div>
-
-    <script src="js/contacto.js"></script>
-  </body>
+  </div>
+  <div class="spacer"></div>
+  <!-- Sección Principal -->
+  <div class="grid-container">
+    <!-- Mapa -->
+    <div class="map-container">
+      <div id="map" style="height: 400px;"></div>
+    </div>
+    <!-- Texto 1 -->
+    <div class="text-container">
+      <h2>Texto 1</h2>
+      <p>Este es un texto de ejemplo para la sección 1.</p>
+    </div>
+    <!-- Texto 2 -->
+    <div class="text-container">
+      <h2>Texto 2</h2>
+      <p>Este es un texto de ejemplo para la sección 2.</p>
+    </div>
+  </div>
+  
+  <script src="js/contacto.js"></script>
+</body>
 </html>
-

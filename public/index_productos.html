@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Catálogo de Productos</title>
-  <link rel="stylesheet" href="./css/index_productos.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catálogo de Productos</title>
+    <link rel="stylesheet" href="./css/index_productos.css" />
 </head>
 <body>
-  <label for="categoria">Selecciona una categoría:</label>
-  <select id="categoria">
-    <option value="Todas">Todas</option>
-    <option value="Txpro">Txpro</option>
-    <option value="Hsgq">Hsgq</option>
-  </select>
-  <div class="catalogo">
-    <!-- Los productos se generarán automáticamente aquí -->
-  </div>
-  <div class="pagination">
-    <ul class="page-list">
-      <!-- Aquí se generará la paginación dinámicamente -->
-    </ul>
-  </div>
-  <script src="./js/index_productos.js"></script>
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.querySelector('body').insertAdjacentHTML('afterbegin', data);
+            });
+      </script>
+
+    <!-- Tu contenido restante del catálogo -->
+    <label for="categoria">Selecciona una categoría:</label>
+    <select id="categoria">
+        <option value="Todas">Todas</option>
+        <option value="Txpro">Txpro</option>
+        <option value="Hsgq">Hsgq</option>
+    </select>
+    <div class="catalogo">
+        <!-- ... -->
+    </div>
+    <div class="pagination">
+        <ul class="page-list">
+            <!-- ... -->
+        </ul>
+    </div>
+    <script src="./js/index_productos.js"></script>
 </body>
 </html>
+
+
+

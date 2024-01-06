@@ -60,29 +60,29 @@
 
       /* Estilos para la versión móvil */
       .contact-header-mobile {
-        display: none;
+        display: none; /* Mantenemos oculta la cabecera móvil inicialmente */
       }
 
       /* Versión móvil */
       @media (max-width: 767px) {
-        .contact-header-pc {
-          display: none;
-        }
-
-        .contact-header-mobile {
-          display: block;
-          background-color: #f2f1ff;
-          color: #000000;
-          padding: 5px 0;
-          text-align: center;
-        }
-
-        .contact-header-mobile a {
-          display: block;
-          margin: 5px 0;
-          font-size: 14px;
-        }
+      .contact-header-pc {
+        display: none; /* Ocultar la cabecera de PC en pantallas pequeñas */
       }
+
+      .contact-header-mobile {
+        display: block; /* Mostrar la cabecera móvil en dispositivos móviles */
+        background-color: #f2f1ff;
+        color: #000000;
+        padding: 5px 0;
+        text-align: center;
+      }
+
+      .contact-header-mobile a {
+        display: block;
+        margin: 5px 0;
+        font-size: 14px;
+      }
+    }
       @keyframes fadeInDown {
         from {
           opacity: 0;
@@ -256,8 +256,8 @@
       </div>
       <nav>
         <ul>
-          <li><a href="#inicio">Inicio</a></li>
-          <li><a href="#productos">Productos</a></li>
+          <li><a href="/index">Inicio</a></li>
+          <li><a href="/index_productos">Productos</a></li>
           <li><a href="/contacto">Contacto</a></li>
           <li><a href="/nosotros">Nosotros</a></li>
         </ul>

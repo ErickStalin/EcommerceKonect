@@ -110,7 +110,35 @@ app.get("/detalles_producto/:id", (req, res) => {
   });
 });
 
-// Ruta para eliminar un producto por su código
+
+app.post("/editar_producto/:id", (req, res) => {
+  const productId = req.params.id;
+  const nuevoNombre = req.body.nuevoNombre; // Obtener el nuevo nombre del cuerpo de la solicitud
+  const nuevoPrecio = req.body.nuevoPrecio; // Obtener el nuevo precio del cuerpo de la solicitud
+
+  console.log(`Solicitud recibida para actualizar el producto con ID: ${productId}`);
+
+  const query = `
+      UPDATE productos SET Nombre = ?, Precio = ? WHERE CodigoProducto =  '${productId}'
+  `;
+
+  db.query(query, [nuevoNombre, nuevoPrecio], (err, results) => {
+    if (err) {
+      console.error("Error al ejecutar la consulta:", err);
+      res.status(500).json({ error: "Error al actualizar el producto." });
+    } else {
+      if (results.affectedRows > 0) {
+        console.log(`Producto con ID ${productId} actualizado correctamente`);
+        res.status(200).json({ message: "Producto actualizado correctamente" });
+      } else {
+        console.log(`No se encontró ningún producto con ID: ${productId}`);
+        res.status(404).json({ error: "Producto no encontrado" });
+      }
+    }
+  });
+});
+
+
 app.post("/eliminar_producto/:id", (req, res) => {
   const productId = req.params.id;
 
@@ -135,6 +163,7 @@ app.post("/eliminar_producto/:id", (req, res) => {
     }
   });
 });
+
 
 
 app.get("/carrito", (req, res) => {
@@ -270,3 +299,4 @@ app.listen(PORT, () => {
 });
 
 module.exports = db;
+

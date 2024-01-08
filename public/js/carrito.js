@@ -31,24 +31,34 @@ window.onload = () => {
     const datosFacturaForm = document.getElementById('datosFacturaForm');
     datosFacturaForm.addEventListener('submit', async (event) => {
       event.preventDefault();
-
+    
       const nombre = document.getElementById('nombre').value;
       const direccion = document.getElementById('direccion').value;
       const correo = document.getElementById('correo').value;
-
+    
+      // Obtener datos del carrito del local storage
+      let productosEnCarrito = localStorage.getItem('productosEnCarrito');
+      productosEnCarrito = productosEnCarrito ? JSON.parse(productosEnCarrito) : [];
+    
+      // Calcular el total a pagar
+      let totalAPagar = 0;
+      productosEnCarrito.forEach(producto => {
+        totalAPagar += parseFloat(producto.precio) * parseInt(producto.cantidad);
+      });
+    
       try {
         const response = await fetch('/enviar-factura', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ nombre, direccion, correo })
+          body: JSON.stringify({ nombre, direccion, correo, productosEnCarrito, totalAPagar }) // Enviar productos y total a pagar al servidor
         });
-
+    
         if (!response.ok) {
           throw new Error('Error al enviar la factura');
         }
-
+    
         alert('Factura enviada por correo electrónico.');
         localStorage.removeItem('productosEnCarrito');
         window.location.href = '/confirmacion';

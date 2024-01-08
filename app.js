@@ -11,6 +11,9 @@ require("dotenv").config();
 const transporter = require("./helpers/mailer");
 const path = require('path');
 const fs = require('fs');
+const PDFDocument = require('pdfkit');
+const jwt = require("jsonwebtoken");
+const blobStream = require('blob-stream'); 
 
 // Configuración de Handlebars
 const hbs = exphbs.create({ extname: "hbs", defaultLayout: "layout" });
@@ -22,6 +25,7 @@ app.use(
 );
 app.use(cors());
 app.use(bodyParser.json());
+app.get('/favicon.ico', (req, res) => res.status(204));
 
 // Configuración de Cloudinary
 cloudinary.config({
@@ -61,6 +65,9 @@ app.get("/nosotros", (req, res) => {
 app.get("/contacto", (req, res) => {
   res.render("contacto");
 });
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs'); // Establecer el motor de vistas como Handlebars
 
 // Nueva ruta para buscar productos desde el proyecto "productos"
 app.get("/buscar_productos", (req, res) => {
@@ -103,47 +110,103 @@ app.get("/detalles_producto/:id", (req, res) => {
   });
 });
 
+// Ruta para eliminar un producto por su código
+app.post("/eliminar_producto/:id", (req, res) => {
+  const productId = req.params.id;
+
+  console.log(`Solicitud recibida para eliminar el producto con ID: ${productId}`);
+
+  const query = `
+      DELETE FROM productos WHERE CodigoProducto = '${productId}'
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error al ejecutar la consulta:", err);
+      res.status(500).json({ error: "Error al eliminar el producto." });
+    } else {
+      if (results.affectedRows > 0) {
+        console.log(`Producto con ID ${productId} eliminado correctamente`);
+        res.status(200).json({ message: "Producto eliminado correctamente" });
+      } else {
+        console.log(`No se encontró ningún producto con ID: ${productId}`);
+        res.status(404).json({ error: "Producto no encontrado" });
+      }
+    }
+  });
+});
+
+
 app.get("/carrito", (req, res) => {
   res.render("carrito");
 });
 
-app.post("/enviar-factura", async (req, res) => {
-  const { nombre, direccion, correo } = req.body;
+app.post('/enviar-factura', async (req, res) => {
+  const { nombre, direccion, correo, productosEnCarrito, totalAPagar } = req.body;
 
-  // Configuración del transporte para nodemailer
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false, // upgrade later with STARTTLS
-    auth: {
-      user: process.env.EMAIL,
-      pass: process.env.EMAIL_PASSWORD,
-    },
+  const PDFDocument = require('pdfkit');
+  const doc = new PDFDocument();
+
+  doc.text(`Factura para: ${nombre}`);
+  doc.text(`Dirección: ${direccion}`);
+  doc.text('Detalles de la compra:');
+
+  // Encabezado de la tabla
+  doc.text('Producto                              Precio                              Cantidad');
+  doc.moveDown(0.5); // Espacio después del encabezado
+
+  const productosImprimir = productosEnCarrito.slice(0, 10); // Limitar a las primeras 10 líneas de productos
+
+  productosImprimir.forEach(producto => {
+    const { nombre, precio, cantidad } = producto;
+    const productName = nombre.padEnd(40); // Ajusta el tamaño de la columna
+    const productPrice = `$${precio}`.padEnd(32); // Ajusta el tamaño de la columna
+    const productQuantity = cantidad.toString().padEnd(16); // Ajusta el tamaño de la columna
+
+    doc.text(`${productName}${productPrice}${productQuantity}`);
   });
 
-  // Contenido del correo
-  const mailOptions = {
+  doc.moveDown(1); // Espacio después de la tabla
+  doc.text(`Total a Pagar: $${totalAPagar.toFixed(2)}`);
+
+  // Generar el PDF y guardar en una variable de tipo buffer
+  const pdfBuffer = await new Promise(resolve => {
+    const buffers = [];
+    doc.on('data', buffers.push.bind(buffers));
+    doc.on('end', () => {
+      const pdfData = Buffer.concat(buffers);
+      resolve(pdfData);
+    });
+    doc.end();
+  });
+
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com', // Reemplaza con el host SMTP de tu proveedor de correo
+    port: 587, // Puerto del servidor SMTP
+    secure: false, // false para TLS; true para SSL
+    auth: {
+      user: process.env.EMAIL, // Dirección de correo electrónico desde la que enviarás los correos
+      pass: process.env.EMAIL_PASSWORD // Contraseña de tu cuenta de correo
+    }
+  });
+
+  transporter.sendMail({
     from: `Konect Soluciones: ${process.env.EMAIL}`,
     to: correo,
-    subject: "Factura de compra",
+    subject: 'Factura de compra',
     text: `Hola ${nombre}, adjuntamos la factura de tu compra. Gracias por tu compra.`,
-    // Puedes adjuntar archivos, HTML, etc., según tus necesidades
-  };
-
-  // Enviar el correo electrónico
-  transporter.sendMail(mailOptions, (error, info) => {
+    attachments: [{
+      filename: 'factura.pdf',
+      content: pdfBuffer, // Aquí adjuntas el buffer del PDF
+      contentType: 'application/pdf'
+    }]
+  }, (error, info) => {
     if (error) {
-      console.error("Error al enviar el correo:", error);
-      res
-        .status(500)
-        .json({ message: "Error al enviar la factura por correo electrónico" });
+      console.error('Error al enviar el correo:', error);
+      res.status(500).json({ message: 'Error al enviar la factura por correo electrónico' });
     } else {
-      console.log("Correo enviado:", info.response);
-      res
-        .status(200)
-        .json({
-          message: "Factura enviada exitosamente por correo electrónico",
-        });
+      console.log('Correo enviado:', info.response);
+      res.status(200).json({ message: 'Factura enviada exitosamente por correo electrónico' });
     }
   });
 });
@@ -160,9 +223,50 @@ app.get('/confirmacion', (req, res) => {
     }
   });
 });
+//LOGIN
+app.get('/edicion', (req, res) => {
+  res.render('edicion'); 
+});
+
+// Función para verificar las credenciales
+function verificarCredenciales(email, contraseña, callback) {
+  // Consultar la base de datos
+  const query = "SELECT * FROM usuarios WHERE email = ? AND contraseña = ?";
+  db.query(query, [email, contraseña], (error, resultados) => {
+      if (error) {
+          console.error("Error en la consulta: " + error.message);
+          callback(false);
+      } else {
+          // Verificar si se encontraron resultados en la consulta
+          if (resultados.length > 0) {
+              callback(true); // Credenciales válidas
+          } else {
+              callback(false); // Credenciales inválidas
+          }
+      }
+  });
+}
+
+// Definir la ruta para verificar las credenciales
+app.post("/verificar-credenciales", (req, res) => {
+  // Obtener las credenciales del cuerpo de la solicitud
+  const { email, contraseña } = req.body;
+
+  // Llamar a la función verificarCredenciales de manera asincrónica
+  verificarCredenciales(email, contraseña, (autenticado) => {
+      if (autenticado) {
+          res.status(200).json({ mensaje: "Inicio de sesión exitoso" });
+      } else {
+          res.status(401).json({ mensaje: "Credenciales incorrectas" });
+      }
+  });
+});
+
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Servidor web en ejecución en http://localhost:${PORT}`);
 });
+
+module.exports = db;

@@ -9,28 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentCategoriaFiltro = "Todas";
   let isScrolling = false;
 
-  window.addEventListener('scroll', () => {
-    if (!isScrolling) {
-      window.requestAnimationFrame(() => {
-        const headerContainer = document.querySelector('.contact-header-pc');
-        const stickyHeader = document.querySelector('.sticky-header');
-        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-
-        if (currentScroll > headerContainer.clientHeight) {
-          stickyHeader.style.top = '0';
-          if (currentScroll > headerContainer.clientHeight + 100) {
-            stickyHeader.style.opacity = '1';
-          }
-        } else {
-          stickyHeader.style.opacity = '0';
-          stickyHeader.style.top = '90px'; // Ajusta la distancia superior según sea necesario
-        }
-        isScrolling = false;
-      });
-      isScrolling = true;
-    }
-  });
-
   function showProductsOnPage(page, categoriaFiltro) {
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -69,17 +47,59 @@ document.addEventListener("DOMContentLoaded", () => {
         CodigoProducto.classList.add("CodigoProducto");
         CodigoProducto.textContent = `Código: ${producto.CodigoProducto}`;
 
-        const leerMasButton = document.createElement("button");
-        leerMasButton.textContent = "Leer más";
-        leerMasButton.addEventListener("click", () => {
-          window.location.href = `/detalles_producto/${producto.CodigoProducto}`;
+        function obtenerCodigoProducto(event) {
+            // Verifica si event está disponible y si su objetivo tiene el atributo 'data-codigo-producto'
+            if (event && event.target && event.target.dataset.codigoProducto) {
+              return event.target.dataset.codigoProducto;
+            } else {
+              console.error('No se pudo obtener el código del producto');
+              return null;
+            }
+        }
+          
+
+        const editarButton = document.createElement("button");
+        editarButton.textContent = "Editar";
+        // Aquí puedes añadir lógica de evento para el botón de editar si es necesario
+
+        const eliminarButton = document.createElement("button");
+        eliminarButton.textContent = "ELIMINAR";
+        eliminarButton.addEventListener("click", () => {
+          const codigoProducto = producto.CodigoProducto;
+
+          fetch(`/eliminar_producto/${codigoProducto}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Error al eliminar el producto');
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('Producto eliminado correctamente', data);
+            // Realizar acciones adicionales si es necesario después de eliminar
+            // Por ejemplo, actualizar la interfaz o mostrar un mensaje al usuario
+          })
+          .catch(error => {
+            console.error('Hubo un problema al eliminar el producto', error);
+            // Manejar errores, mostrar mensajes al usuario, etc.
+          });
         });
+
+
+
+          
 
 
         productoDiv.appendChild(imagen);
         productoDiv.appendChild(nombre);
         productoDiv.appendChild(CodigoProducto);
-        productoDiv.appendChild(leerMasButton);
+        productoDiv.appendChild(editarButton); // Agregar el botón de editar al div del producto
+        productoDiv.appendChild(eliminarButton); // Agregar el botón de eliminar al div del producto
         productosDiv.appendChild(productoDiv);
       });
   }
@@ -104,12 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
       pageList.appendChild(pageButton);
     }
   }
-  const loginButton = document.querySelector('.loginProductos');
-
-  // Agrega un evento clic al botón
-  loginButton.addEventListener('click', () => {
-      window.location.href = 'registro.html';
-  });
 
   fetch("http://localhost:3000/buscar_productos")
     .then((response) => response.json())

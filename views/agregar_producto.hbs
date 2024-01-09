@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agregar Producto</title>
+  <link rel="stylesheet" href="../css/agregar_producto.css">
+</head>
+<body>
+  <h1>Agregar Producto</h1>
+  <form action="/nuevo_producto" method="post">
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" name="nombre" required><br><br>
+    
+    <label for="codigo">Código Producto:</label>
+    <input type="text" id="codigo" name="codigo" required><br><br>
+    
+    <label for="codigoBarras">Código de Barras:</label>
+    <input type="text" id="codigoBarras" name="codigoBarras" required><br><br>
+    
+    <label for="descripcion">Descripción:</label>
+    <textarea id="descripcion" name="descripcion" required></textarea><br><br>
+    
+    <label for="categoria">Categoría:</label>
+    <input type="text" id="categoria" name="categoria" required><br><br>
+    
+    <label for="existencia">Existencia:</label>
+    <input type="number" id="existencia" name="existencia" required><br><br>
+    
+    <label for="precio">Precio:</label>
+    <input type="number" id="precio" name="precio" required><br><br>
+    
+    <label for="coste">Costo:</label>
+    <input type="number" id="coste" name="coste" required><br><br>
+    
+    <input type="submit" value="Agregar Producto">
+  </form>
+  <script src="../js/agregar_producto.js"></script>
+</body>
+</html>

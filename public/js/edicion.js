@@ -150,6 +150,13 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
+  const agregarProductoBtn = document.getElementById('agregarProductoBtn');
+
+  agregarProductoBtn.addEventListener('click', () => {
+    console.log("Botón 'Agregar Producto' clickeado");
+    window.location.href = 'nuevo_producto';
+  });
+
   categoriaSelect.addEventListener("change", () => {
     const categoriaFiltro = categoriaSelect.value.trim();
     currentPage = 1;

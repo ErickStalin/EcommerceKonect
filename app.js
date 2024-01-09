@@ -13,7 +13,8 @@ const path = require('path');
 const fs = require('fs');
 const PDFDocument = require('pdfkit');
 const jwt = require("jsonwebtoken");
-const blobStream = require('blob-stream'); 
+const blobStream = require('blob-stream');
+
 
 // Configuración de Handlebars
 const hbs = exphbs.create({ extname: "hbs", defaultLayout: "layout" });
@@ -23,8 +24,9 @@ app.set("view engine", "hbs");
 app.use(
   express.static(__dirname + "/public", { extensions: ["html", "css", "js"] })
 );
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json()); 
 app.use(cors());
-app.use(bodyParser.json());
 app.get('/favicon.ico', (req, res) => res.status(204));
 
 // Configuración de Cloudinary
@@ -111,29 +113,17 @@ app.get("/detalles_producto/:id", (req, res) => {
 });
 
 
-app.post("/editar_producto/:id", (req, res) => {
-  const productId = req.params.id;
-  const nuevoNombre = req.body.nuevoNombre; // Obtener el nuevo nombre del cuerpo de la solicitud
-  const nuevoPrecio = req.body.nuevoPrecio; // Obtener el nuevo precio del cuerpo de la solicitud
+app.post("/agregar_producto", (req, res) => {
+  const { nombre, codigo, codigoBarras, descripcion, categoria, existencia, precio, coste } = req.body;
 
-  console.log(`Solicitud recibida para actualizar el producto con ID: ${productId}`);
-
-  const query = `
-      UPDATE productos SET Nombre = ?, Precio = ? WHERE CodigoProducto =  '${productId}'
-  `;
-
-  db.query(query, [nuevoNombre, nuevoPrecio], (err, results) => {
+  const query = "INSERT INTO productos (Nombre, CodigoProducto, CodigoBarras, Descripcion, Categoria, Existencia, Precio, Costo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  db.query(query, [nombre, codigo, codigoBarras, descripcion, categoria, existencia, precio, coste], (err, results) => {
     if (err) {
       console.error("Error al ejecutar la consulta:", err);
-      res.status(500).json({ error: "Error al actualizar el producto." });
+      res.status(500).json({ error: "Error al agregar el producto" });
     } else {
-      if (results.affectedRows > 0) {
-        console.log(`Producto con ID ${productId} actualizado correctamente`);
-        res.status(200).json({ message: "Producto actualizado correctamente" });
-      } else {
-        console.log(`No se encontró ningún producto con ID: ${productId}`);
-        res.status(404).json({ error: "Producto no encontrado" });
-      }
+      console.log("Producto agregado correctamente");
+      res.status(200).json({ message: "Producto agregado correctamente" });
     }
   });
 });
@@ -163,6 +153,54 @@ app.post("/eliminar_producto/:id", (req, res) => {
     }
   });
 });
+
+app.post("/editar_producto/:id", (req, res) => {
+  const productId = req.params.id;
+  const nuevoNombre = req.body.nuevoNombre; // Obtener el nuevo nombre del cuerpo de la solicitud
+  const nuevoPrecio = req.body.nuevoPrecio; // Obtener el nuevo precio del cuerpo de la solicitud
+
+  console.log(`Solicitud recibida para actualizar el producto con ID: ${productId}`);
+
+  const query = `
+      UPDATE productos SET Nombre = ?, Precio = ? WHERE CodigoProducto =  '${productId}'
+  `;
+
+  db.query(query, [nuevoNombre, nuevoPrecio], (err, results) => {
+    if (err) {
+      console.error("Error al ejecutar la consulta:", err);
+      res.status(500).json({ error: "Error al actualizar el producto." });
+    } else {
+      if (results.affectedRows > 0) {
+        console.log(`Producto con ID ${productId} actualizado correctamente`);
+        res.status(200).json({ message: "Producto actualizado correctamente" });
+      } else {
+        console.log(`No se encontró ningún producto con ID: ${productId}`);
+        res.status(404).json({ error: "Producto no encontrado" });
+      }
+    }
+  });
+});
+
+app.get("/nuevo_producto", (req, res) => {
+  res.render('agregar_producto');
+});
+
+app.post("/nuevo_producto", (req, res) => {
+  const { nombre, codigo, codigoBarras, descripcion, categoria, existencia, precio, coste } = req.body;
+
+  const query = "INSERT INTO productos (Nombre, CodigoProducto, CodigoBarras, Descripcion, Categoria, Existencia, Precio, Costo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  
+  db.query(query, [nombre, codigo, codigoBarras, descripcion, categoria, existencia, precio, coste], (err, results) => {
+    if (err) {
+      console.error("Error al ejecutar la consulta:", err);
+      res.status(500).json({ error: "Error al agregar el producto" });
+    } else {
+      console.log("Producto agregado correctamente");
+      res.redirect("/edicion");
+    }
+  });
+});
+
 
 
 

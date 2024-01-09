@@ -202,8 +202,6 @@ app.post("/nuevo_producto", (req, res) => {
 });
 
 
-
-
 app.get("/carrito", (req, res) => {
   res.render("carrito");
 });

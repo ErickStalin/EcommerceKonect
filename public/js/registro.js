@@ -1,13 +1,16 @@
 function togglePasswordVisibility() {
-    const contraseñaInput = document.getElementById("contraseña");
-    const togglePasswordButton = document.getElementById("toggle-password");
+    const passwordField = document.getElementById('contraseña');
+    const toggleBtn = document.getElementById('toggle-password');
+    const label = document.getElementById('contraseña-label');
 
-    if (contraseñaInput.type === "password") {
-        contraseñaInput.type = "text";
-        togglePasswordButton.classList.add("eye-slash");
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i>';
+        label.classList.add('label-hidden');
     } else {
-        contraseñaInput.type = "password";
-        togglePasswordButton.classList.remove("eye-slash");
+        passwordField.type = 'password';
+        toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
+        label.classList.remove('label-hidden');
     }
 }
 

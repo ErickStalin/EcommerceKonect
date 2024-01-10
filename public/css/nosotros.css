@@ -63,6 +63,7 @@
 .imagenes-container img {
   width: 20%; /* Ajusta el ancho de las imágenes para que ocupen el contenedor */
   height: auto; /* Mantiene la proporción de la imagen */
+  margin-right: 20px; /* Agrega margen entre las imágenes */
 }
 .seccion-5 {
   display: flex;

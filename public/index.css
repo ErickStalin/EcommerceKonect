@@ -249,27 +249,29 @@ h1{
     text-align: center;
 }
 
-/* Estilos para los caso de exito */
 /* Estilos para el grid de casos */
 .casos-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, auto);
-    grid-gap: 20px;
-    margin: 20px;
+    grid-gap: 10px;
+    margin: 5px;
 }
 
 .casos-item {
     position: relative;
     overflow: hidden;
     cursor: pointer;
+    width: 90%;
+    height: 90%;
 }
 
-.casos-item img {
+.casos-grid .casos-item img {
     width: 100%;
     height: 100%;
     transition: transform 0.3s;
 }
+
 
 .image-overlay {
     position: absolute;

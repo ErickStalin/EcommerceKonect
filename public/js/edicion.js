@@ -1,3 +1,6 @@
+document.getElementById('cerrarSesionBtn').addEventListener('click', function() {
+  window.location.href = '/index_productos.html';
+});
 document.addEventListener("DOMContentLoaded", () => {
   const productosDiv = document.querySelector(".catalogo");
   const pageList = document.querySelector(".page-list");

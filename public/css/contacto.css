@@ -4,6 +4,9 @@ body {
   font-family: Arial, sans-serif;
 }
 
+body, h1, h2, p {
+  font-family: 'Montserrat', sans-serif;
+}
 .image-container {
   position: relative;
   width: 100%;

@@ -1,78 +1,116 @@
 /* edicion.css */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f2f2f2;
-  }
-  
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f2f2f2;
+}
+
+.catalogo {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+.producto {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  background-color: #fff;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsividad para catálogo en dispositivos pequeños */
+@media (max-width: 768px) {
   .catalogo {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    padding: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
   }
-  
-  .producto {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
-    background-color: #fff;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Responsividad para catálogo en dispositivos pequeños */
-  @media (max-width: 768px) {
-    .catalogo {
-      grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
-    }
-  }
-  
-  .producto img {
-    max-width: 100%;
-    height: auto;
-  }
-  
-  .nombre {
-    font-weight: bold;
-    margin-top: 10px;
-  }
-  
-  .pagination {
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  .page-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .page-list li {
-    display: inline-block;
-    margin-right: 5px;
-    cursor: pointer;
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    background-color: #f2f2f2;
-  }
-  
-  .page-list li.active {
-    background-color: #007bff;
-    color: #fff;
-  }
-  
-  .loginProductos {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: #0e2b49;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 24px;
-  }
-  
+}
+
+.producto img {
+  max-width: 100%;
+  height: auto;
+}
+
+.nombre {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.pagination {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.page-list {
+  list-style: none;
+  padding: 0;
+}
+
+.page-list li {
+  display: inline-block;
+  margin-right: 5px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background-color: #f2f2f2;
+}
+
+.page-list li.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.loginProductos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #0e2b49;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+}
+#agregarProductoBtn {
+  bottom: 20px;
+  right: 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px; 
+  padding: 2px; 
+  width: 75px; 
+  height: 50px; 
+  font-size: 20px;
+  font-family: 'Arial', sans-serif; 
+  font-weight: 300;
+  font-size: 16px; 
+}
+/* Estilos para el icono */
+#cerrarSesionBtn i {
+  display: block;
+  line-height: 50px; /* Centrar verticalmente */
+}
+body {
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+#cerrarSesionBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#cerrarSesionBtn i {
+  font-size: 40px;
+  color: red;
+}

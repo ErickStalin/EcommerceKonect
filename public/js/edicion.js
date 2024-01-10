@@ -103,16 +103,20 @@ document.addEventListener("DOMContentLoaded", () => {
         CodigoProducto.classList.add("CodigoProducto");
         CodigoProducto.textContent = `Código: ${producto.CodigoProducto}`;
 
+        function eliminarProductoDeLista(codigoProducto) {
+          productos = productos.filter(producto => producto.CodigoProducto !== codigoProducto);
+          showProductsOnPage(currentPage, currentCategoriaFiltro);
+        }
+      
+        // Evento click para el botón de eliminar producto
         const eliminarButton = document.createElement("button");
         eliminarButton.textContent = "ELIMINAR";
         eliminarButton.addEventListener("click", (event) => {
           const codigoProducto = obtenerCodigoProducto(event);
-
+      
           if (codigoProducto) {
-            const confirmacion = confirm(
-              "¿Estás seguro de eliminar el producto?"
-            );
-
+            const confirmacion = confirm("¿Estás seguro de eliminar el producto?");
+      
             if (confirmacion) {
               fetch(`/eliminar_producto/${codigoProducto}`, {
                 method: "POST",
@@ -129,18 +133,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 .then((data) => {
                   console.log("Producto eliminado correctamente", data);
                   alert("Producto eliminado con éxito");
-                  window.location.reload();
+                  eliminarProductoDeLista(codigoProducto); // Eliminar producto de la lista en memoria
                 })
                 .catch((error) => {
-                  console.error(
-                    "Hubo un problema al eliminar el producto",
-                    error
-                  );
+                  console.error("Hubo un problema al eliminar el producto", error);
                 });
             }
           }
         });
-
         productoDiv.appendChild(imagen);
         productoDiv.appendChild(nombre);
         productoDiv.appendChild(CodigoProducto);

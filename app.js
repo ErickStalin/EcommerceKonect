@@ -11,6 +11,7 @@ require("dotenv").config();
 const transporter = require("./helpers/mailer");
 const path = require('path');
 const fs = require('fs');
+const multer = require('multer');
 const PDFDocument = require('pdfkit');
 const jwt = require("jsonwebtoken");
 const blobStream = require('blob-stream');
@@ -112,7 +113,7 @@ app.get("/detalles_producto/:id", (req, res) => {
   });
 });
 
-
+//VERIFICAAAAAR
 app.post("/agregar_producto", (req, res) => {
   const { nombre, codigo, codigoBarras, descripcion, categoria, existencia, precio, coste } = req.body;
 
@@ -122,7 +123,7 @@ app.post("/agregar_producto", (req, res) => {
       console.error("Error al ejecutar la consulta:", err);
       res.status(500).json({ error: "Error al agregar el producto" });
     } else {
-      console.log("Producto agregado correctamente");
+      res.render('agregar_producto');
       res.status(200).json({ message: "Producto agregado correctamente" });
     }
   });
@@ -185,21 +186,49 @@ app.get("/nuevo_producto", (req, res) => {
   res.render('agregar_producto');
 });
 
-app.post("/nuevo_producto", (req, res) => {
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/uploads'); // Directorio donde se guardan temporalmente los archivos antes de subirlos a Cloudinary
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
+    const extension = file.originalname.split('.').pop(); // Obtener la extensión del archivo original
+    const filename = `${uniqueSuffix}.${extension}`; // Nuevo nombre de archivo único con extensión
+    cb(null, filename);
+  }
+});
+
+const upload = multer({ storage: storage });
+
+app.post("/nuevo_producto", upload.single('imagen'), (req, res) => {
+  console.log("Solicitud recibida para agregar un nuevo producto");
   const { nombre, codigo, codigoBarras, descripcion, categoria, existencia, precio, coste } = req.body;
 
-  const query = "INSERT INTO productos (Nombre, CodigoProducto, CodigoBarras, Descripcion, Categoria, Existencia, Precio, Costo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-  
-  db.query(query, [nombre, codigo, codigoBarras, descripcion, categoria, existencia, precio, coste], (err, results) => {
-    if (err) {
-      console.error("Error al ejecutar la consulta:", err);
+  // Cargar la imagen a Cloudinary desde el archivo temporal en el servidor
+  cloudinary.uploader.upload(req.file.path, (error, result) => {
+    if (error) {
+      console.error("Error al cargar la imagen a Cloudinary:", error);
       res.status(500).json({ error: "Error al agregar el producto" });
     } else {
-      console.log("Producto agregado correctamente");
-      res.redirect("/edicion");
+      // Obtener la URL de la imagen cargada en Cloudinary
+      console.log("Imagen subida a Cloudinary:", result.secure_url);
+      const imagenCloudinary = result.secure_url; // URL de la imagen en Cloudinary
+
+      // Insertar el enlace de la imagen en la base de datos
+      const query = "INSERT INTO productos (Nombre, CodigoProducto, CodigoBarras, Descripcion, Categoria, Existencia, Precio, Costo, Imagenes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(query, [nombre, codigo, codigoBarras, descripcion, categoria, existencia, precio, coste, imagenCloudinary], (err, results) => {
+        if (err) {
+          console.error("Error al ejecutar la consulta:", err);
+          res.status(500).json({ error: "Error al agregar el producto" });
+        } else {
+          console.log("Producto agregado correctamente");
+          res.redirect('/edicion'); // Redirigir a la página de edición
+        }
+      });
     }
   });
 });
+
 
 
 app.get("/carrito", (req, res) => {

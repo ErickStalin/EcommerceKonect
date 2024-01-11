@@ -32,16 +32,16 @@ app.get('/favicon.ico', (req, res) => res.status(204));
 
 // Configuración de Cloudinary
 cloudinary.config({
-  cloud_name: "dyrzihnrx",
-  api_key: "725186379266327",
-  api_secret: "SerMiIObG-I3y7g3_Q_LL-eFS1A",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const db = mysql.createConnection({
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "Erick",
-  password: process.env.DB_PASSWORD || "0986167219",
-  database: process.env.DB_NAME || "ventasKonect",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 db.connect((err) => {
@@ -70,9 +70,8 @@ app.get("/contacto", (req, res) => {
 });
 
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs'); // Establecer el motor de vistas como Handlebars
+app.set('view engine', 'hbs');
 
-// Nueva ruta para buscar productos desde el proyecto "productos"
 app.get("/buscar_productos", (req, res) => {
   const query = `
     SELECT CodigoProducto, Nombre, Categoria, Imagenes FROM productos
@@ -155,32 +154,58 @@ app.post("/eliminar_producto/:id", (req, res) => {
   });
 });
 
-app.post("/editar_producto/:id", (req, res) => {
+app.get("/editar_producto/:id", (req, res) => {
   const productId = req.params.id;
-  const nuevoNombre = req.body.nuevoNombre; // Obtener el nuevo nombre del cuerpo de la solicitud
-  const nuevoPrecio = req.body.nuevoPrecio; // Obtener el nuevo precio del cuerpo de la solicitud
 
-  console.log(`Solicitud recibida para actualizar el producto con ID: ${productId}`);
-
-  const query = `
-      UPDATE productos SET Nombre = ?, Precio = ? WHERE CodigoProducto =  '${productId}'
-  `;
-
-  db.query(query, [nuevoNombre, nuevoPrecio], (err, results) => {
+  // Realizar una consulta a la base de datos para obtener los datos del producto
+  const query = "SELECT * FROM productos WHERE CodigoProducto = ?";
+  db.query(query, [productId], (err, results) => {
     if (err) {
-      console.error("Error al ejecutar la consulta:", err);
-      res.status(500).json({ error: "Error al actualizar el producto." });
+      console.error("Error al obtener datos del producto:", err);
+      res.status(500).json({ error: "Error al obtener datos del producto." });
     } else {
-      if (results.affectedRows > 0) {
-        console.log(`Producto con ID ${productId} actualizado correctamente`);
-        res.status(200).json({ message: "Producto actualizado correctamente" });
-      } else {
-        console.log(`No se encontró ningún producto con ID: ${productId}`);
-        res.status(404).json({ error: "Producto no encontrado" });
-      }
+      const producto = results[0]; // Suponiendo que obtienes solo un resultado
+      res.render("editar_producto.hbs", { productId, producto });
     }
   });
 });
+
+app.post("/editar_producto/:id", (req, res) => {
+  const productId = req.params.id;
+  const nuevoNombre = req.body.nuevoNombre;
+  const nuevoPrecio = req.body.nuevoPrecio;
+  const nuevoCosto = req.body.nuevoCosto;
+  const nuevaExistencia = req.body.nuevaExistencia;
+  const nuevaDescripcion = req.body.nuevaDescripcion;
+
+  const query = `
+    UPDATE productos 
+    SET Nombre = ?, Precio = ?, Costo = ?, Existencia = ?, Descripcion = ?
+    WHERE CodigoProducto = ?
+  `;
+
+  db.query(
+    query,
+    [nuevoNombre, nuevoPrecio, nuevoCosto, nuevaExistencia, nuevaDescripcion, productId],
+    (err, results) => {
+      if (err) {
+        console.error("Error al ejecutar la consulta:", err);
+        res.status(500).json({ error: "Error al actualizar el producto." });
+      } else {
+        if (results.affectedRows > 0) {
+          console.log(`Producto con ID ${productId} actualizado correctamente`);
+          
+          // Redirigir a la página de productos después de la actualización
+          res.redirect('/edicion');
+        } else {
+          console.log(`No se encontró ningún producto con ID: ${productId}`);
+          res.status(404).json({ error: "Producto no encontrado" });
+        }
+      }
+    }
+  );
+});
+
 
 app.get("/nuevo_producto", (req, res) => {
   res.render('agregar_producto');
@@ -201,35 +226,63 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 app.post("/nuevo_producto", upload.single('imagen'), (req, res) => {
-  console.log("Solicitud recibida para agregar un nuevo producto");
   const { nombre, codigo, codigoBarras, descripcion, categoria, existencia, precio, coste } = req.body;
 
-  // Cargar la imagen a Cloudinary desde el archivo temporal en el servidor
-  cloudinary.uploader.upload(req.file.path, (error, result) => {
+  // Verificar la existencia del código en el servidor antes de insertar
+  const consultaExistencia = 'SELECT COUNT(*) AS total FROM productos WHERE CodigoProducto = ?';
+  db.query(consultaExistencia, [codigo], (error, resultados) => {
     if (error) {
-      console.error("Error al cargar la imagen a Cloudinary:", error);
-      res.status(500).json({ error: "Error al agregar el producto" });
+      console.error('Error al verificar la existencia del código:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
     } else {
-      // Obtener la URL de la imagen cargada en Cloudinary
-      console.log("Imagen subida a Cloudinary:", result.secure_url);
-      const imagenCloudinary = result.secure_url; // URL de la imagen en Cloudinary
+      const codigoExistente = resultados[0].total > 0;
+      if (codigoExistente) {
+        res.status(400).json({ error: 'El código ya existe, no se puede agregar el producto' });
+      } else {
+        // Cargar la imagen a Cloudinary desde el archivo temporal en el servidor
+        cloudinary.uploader.upload(req.file.path, (error, result) => {
+          if (error) {
+            console.error("Error al cargar la imagen a Cloudinary:", error);
+            res.status(500).json({ error: "Error al agregar el producto" });
+          } else {
+            // Obtener la URL de la imagen cargada en Cloudinary
+            console.log("Imagen subida a Cloudinary:", result.secure_url);
+            const imagenCloudinary = result.secure_url; // URL de la imagen en Cloudinary
 
-      // Insertar el enlace de la imagen en la base de datos
-      const query = "INSERT INTO productos (Nombre, CodigoProducto, CodigoBarras, Descripcion, Categoria, Existencia, Precio, Costo, Imagenes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(query, [nombre, codigo, codigoBarras, descripcion, categoria, existencia, precio, coste, imagenCloudinary], (err, results) => {
-        if (err) {
-          console.error("Error al ejecutar la consulta:", err);
-          res.status(500).json({ error: "Error al agregar el producto" });
-        } else {
-          console.log("Producto agregado correctamente");
-          res.redirect('/edicion'); // Redirigir a la página de edición
-        }
-      });
+            // Insertar el enlace de la imagen en la base de datos
+            const query = "INSERT INTO productos (Nombre, CodigoProducto, CodigoBarras, Descripcion, Categoria, Existencia, Precio, Costo, Imagenes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            db.query(query, [nombre, codigo, codigoBarras, descripcion, categoria, existencia, precio, coste, imagenCloudinary], (err, results) => {
+              if (err) {
+                console.error("Error al ejecutar la consulta:", err);
+                res.status(500).json({ error: "Error al agregar el producto" });
+              } else {
+                console.log("Producto agregado correctamente");
+                res.redirect('/edicion'); // Redirigir a la página de edición
+              }
+            });
+          }
+        });
+      }
     }
   });
 });
 
 
+app.get('/verificar_codigo_existente', (req, res) => {
+  const codigo = req.query.codigo;
+
+  // Consultar la base de datos para verificar la existencia del código
+  const consultaExistencia = 'SELECT COUNT(*) AS total FROM productos WHERE CodigoProducto = ?';
+  db.query(consultaExistencia, [codigo], (error, resultados) => {
+    if (error) {
+      console.error('Error al consultar la base de datos:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    } else {
+      const codigoExistente = resultados[0].total > 0;
+      res.json({ existe: codigoExistente });
+    }
+  });
+});
 
 app.get("/carrito", (req, res) => {
   res.render("carrito");
@@ -356,6 +409,10 @@ app.post("/verificar-credenciales", (req, res) => {
   });
 });
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('¡Algo salió mal!');
+});
 
 const PORT = process.env.PORT || 3000;
 

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Producto</title>
+  <link rel="stylesheet" href="../css/editar_producto.css">
+</head>
+<body>
+  <form action="/editar_producto/{{ productId }}" method="post">
+  <h1>Apartado de edición</h1>
+    <input type="hidden" id="productId" name="productId" value="{{ productId }}">
+    
+    <label for="nuevoNombre">Nuevo Nombre:</label>
+    <input type="text" id="nuevoNombre" name="nuevoNombre" value="{{ producto.Nombre }}" required><br><br>
+
+    <label for="nuevoPrecio">Nuevo Precio:</label>
+    <input type="number" id="nuevoPrecio" name="nuevoPrecio" value="{{ producto.Precio }}" required><br><br>
+
+    <label for="nuevoCosto">Nuevo Costo:</label>
+    <input type="number" id="nuevoCosto" name="nuevoCosto" value="{{ producto.Costo }}" required><br><br>
+
+    <label for="nuevaExistencia">Nueva Existencia:</label>
+    <input type="number" id="nuevaExistencia" name="nuevaExistencia" value="{{ producto.Existencia }}" required><br><br>
+
+    <label for="nuevaDescripcion">Nueva Descripción:</label>
+    <textarea id="nuevaDescripcion" name="nuevaDescripcion" required>{{ producto.Descripcion }}</textarea><br><br>
+
+    <input type="submit" value="Guardar Cambios">
+    <button class="cancelarBtnEdi">Cancelar</button>
+  </form>
+
+  <script src="../js/editar_producto.js"></script>
+</body>
+</html>

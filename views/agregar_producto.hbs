@@ -8,14 +8,15 @@
 </head>
 <body>
   
-  <form action="/nuevo_producto" method="post" enctype="multipart/form-data">
+  <form id="tuFormulario" action="/nuevo_producto" method="post" enctype="multipart/form-data">
   <h1>Agregar Producto</h1>
     <label for="nombre">Nombre:</label>
     <input type="text" id="nombre" name="nombre" required><br><br>
     
     <label for="codigo">Código Producto:</label>
-    <input type="text" id="codigo" name="codigo" required><br><br>
-    
+    <input type="text" id="codigo" name="codigo" required>
+    <span id="codigoError" style="color: red;"></span><br><br>
+
     <label for="codigoBarras">Código de Barras:</label>
     <input type="text" id="codigoBarras" name="codigoBarras" required><br><br>
     

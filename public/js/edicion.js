@@ -61,46 +61,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const editarButton = document.createElement("button");
         editarButton.textContent = "Editar";
         editarButton.addEventListener("click", (event) => {
-          const confirmacion = confirm("¿Estás seguro de editar el producto?");
           const codigoProducto = obtenerCodigoProducto(event);
 
-          if (confirmacion) {
-            const nuevoNombre = prompt("Ingresa el nuevo nombre del producto:");
-            const nuevoPrecio = prompt("Ingresa el nuevo precio del producto:");
-
-            if (
-              codigoProducto &&
-              nuevoNombre !== null &&
-              nuevoPrecio !== null
-            ) {
-              fetch(`/editar_producto/${codigoProducto}`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ nuevoNombre, nuevoPrecio }),
-              })
-                .then((response) => {
-                  if (!response.ok) {
-                    throw new Error("Error al editar el producto");
-                  }
-                  return response.json();
-                })
-                .then((data) => {
-                  console.log("Producto editado correctamente", data);
-                  alert("Producto editado con éxito");
-                  window.location.reload();
-                })
-                .catch((error) => {
-                  console.error(
-                    "Hubo un problema al editar el producto",
-                    error
-                  );
-                  // Manejo de errores al editar el producto...
-                });
-            }
+          if (codigoProducto) {
+            // Redirigir a la página del formulario de actualización con el ID del producto
+            window.location.href = `/editar_producto/${codigoProducto}`;
           }
         });
+
 
         const CodigoProducto = document.createElement("p");
         CodigoProducto.classList.add("CodigoProducto");

@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
+  text-align: center;
 }
 
 body, h1, h2, p {
@@ -48,24 +49,57 @@ p {
   }
 }
 
-.acordion-container {
+/* Estilos para el contenedor del acordeón */
+.accordion-container {
   overflow: auto;
   margin: 0 auto; /* Centra el acordeón */
+  max-width: 800px; /* Ajusta el ancho máximo del acordeón */
 }
 
-.acordion {
+/* Estilos para el acordeón */
+.accordion {
   display: flex;
-  width: max-content;
-  transition: transform 0.5s ease-in-out;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px; /* Ajusta el ancho máximo del acordeón */
   margin: 0 auto; /* Centra el acordeón */
-  max-width: calc(100% - 40px); /* Ajusta el ancho del acordeón */
 }
 
-.acordion img {
-  width: 350px; /* Ajusta el tamaño de las imágenes */
-  margin-right: 30px; /* Espacio entre las imágenes */
-  cursor: pointer;
+/* Estilos para los elementos del acordeón */
+.accordion-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  font-size: 1.2em;
 }
+
+/* Estilos para las imágenes en el acordeón */
+.accordion-item img {
+  width: 350px; /* Ajusta el ancho de la imagen al 100% del contenedor */
+  max-width: 350px; /* Ajusta el ancho máximo de la imagen */
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+/* Estilos para los títulos en el acordeón */
+.accordion-item h1 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+/* Estilos para los textos en el acordeón */
+.accordion-item p {
+  font-size: 1em;
+  color: #555;
+  margin-bottom: 10px;
+}
+
 .spacer {
   height: 50px; /* Ajusta el tamaño del espaciado vertical */
 }
@@ -90,4 +124,9 @@ p {
 /* Estilos para los contenedores de texto */
 .text-container {
   grid-column: span 1; /* Ocupa una columna */
+}
+#titulo-servicio {
+  font-family: 'Cursive', sans-serif;
+  font-size: 2.5em; /* Ajusta el tamaño de la fuente según tus preferencias */
+  color: #333;
 }

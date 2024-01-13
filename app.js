@@ -240,18 +240,18 @@ app.post("/nuevo_producto", upload.single('imagen'), (req, res) => {
         res.status(400).json({ error: 'El código ya existe, no se puede agregar el producto' });
       } else {
         // Cargar la imagen a Cloudinary desde el archivo temporal en el servidor
-        cloudinary.uploader.upload(req.file.path, (error, result) => {
+        cloudinary.uploader.upload(req.file.path, { folder: "tu_carpeta_en_cloudinary" }, (error, result) => {
           if (error) {
             console.error("Error al cargar la imagen a Cloudinary:", error);
             res.status(500).json({ error: "Error al agregar el producto" });
           } else {
-            // Obtener la URL de la imagen cargada en Cloudinary
-            console.log("Imagen subida a Cloudinary:", result.secure_url);
-            const imagenCloudinary = result.secure_url; // URL de la imagen en Cloudinary
+            // Obtener el Public ID de la imagen cargada en Cloudinary
+            console.log("Imagen subida a Cloudinary. Public ID:", result.public_id);
+            const publicId = result.public_id; // Public ID de la imagen en Cloudinary
 
-            // Insertar el enlace de la imagen en la base de datos
+            // Insertar el Public ID en la base de datos
             const query = "INSERT INTO productos (Nombre, CodigoProducto, CodigoBarras, Descripcion, Categoria, Existencia, Precio, Costo, Imagenes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            db.query(query, [nombre, codigo, codigoBarras, descripcion, categoria, existencia, precio, coste, imagenCloudinary], (err, results) => {
+            db.query(query, [nombre, codigo, codigoBarras, descripcion, categoria, existencia, precio, coste, publicId], (err, results) => {
               if (err) {
                 console.error("Error al ejecutar la consulta:", err);
                 res.status(500).json({ error: "Error al agregar el producto" });

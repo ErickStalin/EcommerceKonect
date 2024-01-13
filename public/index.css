@@ -231,7 +231,7 @@ img {
     left: 0;
     width: 100%;
     padding: 10px;
-    background-color: #1E73BE;
+    background-color: #1e619c;
     color: #ffffff;
     opacity: 0;
     transition: opacity 0.3s;
@@ -407,7 +407,7 @@ h1{
 }
 
 .service-info p {
-    background: #ff6f61; /* Color de fondo del texto */
+    background: #8485a8; /* Color de fondo del texto */
     color: #000000; /* Color del texto del texto */
     padding: 10px;
     margin: 0;

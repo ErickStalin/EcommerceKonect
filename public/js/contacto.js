@@ -20,7 +20,7 @@ window.addEventListener('scroll', () => {
         }
       } else {
         stickyHeader.style.opacity = '0';
-        stickyHeader.style.top = '90px'; // Ajusta la distancia superior según sea necesario
+        stickyHeader.style.top = '90px'; 
       }
       isScrolling = false;
     });
@@ -46,7 +46,7 @@ acordion.addEventListener("mousemove", (e) => {
   if (!isMouseDown) return;
   e.preventDefault();
   const x = e.pageX - acordion.offsetLeft;
-  const walk = (x - startX) * 2; // Ajusta la sensibilidad del movimiento
+  const walk = (x - startX) * 2;
   acordion.scrollLeft = scrollLeft - walk;
 });
 
@@ -55,7 +55,7 @@ images.forEach((image) => {
 });
 
 function iniciarMap(){
-  var coord = {lat:-34.5956145 ,lng: -58.4431949};
+  var coord = {lat:-78.48140290517965 ,lng: -0.15775691312081844};
   var map = new google.maps.Map(document.getElementById('map'),{
     zoom: 10,
     center: coord

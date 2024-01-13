@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
         CodigoProducto.textContent = `Código: ${producto.CodigoProducto}`;
 
         const leerMasButton = document.createElement("button");
-        leerMasButton.textContent = "Leer más";
+        leerMasButton.textContent = "Más Detalles";
         leerMasButton.addEventListener("click", () => {
           window.location.href = `/detalles_producto/${producto.CodigoProducto}`;
         });

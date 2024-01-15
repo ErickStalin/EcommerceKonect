@@ -5,16 +5,12 @@ const mysql = require("mysql");
 const nodemailer = require("nodemailer");
 const cors = require("cors");
 const cloudinary = require("cloudinary").v2;
-let productosEnCarrito = [];
 const app = express();
 require("dotenv").config();
-const transporter = require("./helpers/mailer");
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const PDFDocument = require('pdfkit');
-const jwt = require("jsonwebtoken");
-const blobStream = require('blob-stream');
 
 
 // Configuración de Handlebars
@@ -291,30 +287,67 @@ app.get("/carrito", (req, res) => {
 app.post('/enviar-factura', async (req, res) => {
   const { nombre, direccion, correo, productosEnCarrito, totalAPagar } = req.body;
 
-  const PDFDocument = require('pdfkit');
   const doc = new PDFDocument();
 
-  doc.text(`Factura para: ${nombre}`);
-  doc.text(`Dirección: ${direccion}`);
-  doc.text('Detalles de la compra:');
+  // Añadir logo al encabezado
+  const logoPath = path.join(__dirname, './public/logo.png');
+  doc.image(logoPath, 450, 45, { width: 150 });
+
+  // Encabezado personalizado (alineado a la izquierda)
+  doc.fontSize(20).text('Konect Soluciones', 50, 57); // Ajusta la coordenada x según tu preferencia
+
+  // Información del cliente (alineada a la izquierda)
+  doc.moveDown(0.5);
+  doc.fontSize(12).text(`Factura para: ${nombre}`, { align: 'left' });
+  doc.text(`Dirección: ${direccion}`, { align: 'left' });
+
+  // Detalles de la compra (alineados a la izquierda)
+  doc.moveDown(1);
+  doc.fontSize(12).text('Detalles de la compra:', { align: 'left' });
 
   // Encabezado de la tabla
-  doc.text('Producto                              Precio                              Cantidad');
-  doc.moveDown(0.5); // Espacio después del encabezado
+  doc.moveDown(0.5);
+  doc.fontSize(10);
+  const detallesCompraY = doc.y; // Guarda la posición actual Y para los detalles de la compra
+  doc.lineJoin('miter').rect(50, detallesCompraY, 500, 20).stroke(); // Línea superior de la tabla
+  doc.text('Producto', 60, detallesCompraY + 3);
+  doc.text('Precio', 300, detallesCompraY + 3, { width: 100, align: 'right' });
+  doc.text('Cantidad', 450, detallesCompraY + 3, { width: 50, align: 'right' });
+  doc.moveDown(0.5);
 
-  const productosImprimir = productosEnCarrito.slice(0, 10); // Limitar a las primeras 10 líneas de productos
+  const productosImprimir = productosEnCarrito.slice(0, 10);
 
-  productosImprimir.forEach(producto => {
+  productosImprimir.forEach((producto, index) => {
     const { nombre, precio, cantidad } = producto;
-    const productName = nombre.padEnd(40); // Ajusta el tamaño de la columna
-    const productPrice = `$${precio}`.padEnd(32); // Ajusta el tamaño de la columna
-    const productQuantity = cantidad.toString().padEnd(16); // Ajusta el tamaño de la columna
-
-    doc.text(`${productName}${productPrice}${productQuantity}`);
+  
+    // Calcular la posición Y en función del índice
+    const yPosition = detallesCompraY + 20 + index * 20;
+  
+    console.log(`Producto: ${nombre}, Precio: ${precio}, Cantidad: ${cantidad}`); // Agregado para depuración
+  
+    // Columna de Nombre (ajustar el ancho y truncar si es necesario)
+    const maxNombreLength = 25; // Establece la longitud máxima permitida para el nombre
+    const truncatedNombre = nombre.length > maxNombreLength ? nombre.substring(0, maxNombreLength) + '...' : nombre;
+  
+    // Convertir precio a número antes de formatearlo
+    const precioNumerico = parseFloat(precio);
+  
+    // Verificar si el precio es un número válido
+    if (!isNaN(precioNumerico)) {
+      // Fila de datos
+      doc.text(`${truncatedNombre}`, 60, yPosition)
+        .text(`$${precioNumerico.toFixed(2)}`, 300, yPosition, { width: 100, align: 'right' })
+        .text(`${cantidad.toString()}`, 450, yPosition, { width: 50, align: 'right' });
+    } else {
+      // Si el precio no es un número, imprímelo para depuración
+      console.log(`Precio inválido en el producto: ${nombre}, Tipo: ${typeof precio}`);
+    }
   });
 
-  doc.moveDown(1); // Espacio después de la tabla
-  doc.text(`Total a Pagar: $${totalAPagar.toFixed(2)}`);
+  // Total a pagar
+  doc.moveDown(1.5);
+  doc.text(`Total a Pagar: $${totalAPagar.toFixed(2)}`, { align: 'right' });
+
 
   // Generar el PDF y guardar en una variable de tipo buffer
   const pdfBuffer = await new Promise(resolve => {
@@ -327,16 +360,18 @@ app.post('/enviar-factura', async (req, res) => {
     doc.end();
   });
 
+  // Configuración del servicio de correo
   const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com', // Reemplaza con el host SMTP de tu proveedor de correo
-    port: 587, // Puerto del servidor SMTP
-    secure: false, // false para TLS; true para SSL
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
     auth: {
-      user: process.env.EMAIL, // Dirección de correo electrónico desde la que enviarás los correos
-      pass: process.env.EMAIL_PASSWORD // Contraseña de tu cuenta de correo
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASSWORD
     }
   });
 
+  // Envío del correo con la factura adjunta
   transporter.sendMail({
     from: `Konect Soluciones: ${process.env.EMAIL}`,
     to: correo,
@@ -344,7 +379,7 @@ app.post('/enviar-factura', async (req, res) => {
     text: `Hola ${nombre}, adjuntamos la factura de tu compra. Gracias por tu compra.`,
     attachments: [{
       filename: 'factura.pdf',
-      content: pdfBuffer, // Aquí adjuntas el buffer del PDF
+      content: pdfBuffer,
       contentType: 'application/pdf'
     }]
   }, (error, info) => {
@@ -357,6 +392,8 @@ app.post('/enviar-factura', async (req, res) => {
     }
   });
 });
+
+
 
 app.get('/confirmacion', (req, res) => {
   const filePath = path.join(__dirname, 'public', 'ok.html');

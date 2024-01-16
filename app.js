@@ -36,8 +36,11 @@ cloudinary.config({
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
+  port: process.env.DB_PORT,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  connectTimeout: 30000,
+  authPlugin: 'mysql_native_password',
 });
 
 db.connect((err) => {

@@ -41,6 +41,8 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME,
   connectTimeout: 30000,
   authPlugin: 'mysql_native_password',
+  insecureAuth: true, 
+  typeCast: true,
 });
 
 db.connect((err) => {

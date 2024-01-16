@@ -40,7 +40,7 @@ const db = mysql.createConnection({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   connectTimeout: 30000,
-  authPlugin: 'mysql_native_password',
+  authPlugin: 'caching_sha2_password',
   insecureAuth: true, 
   typeCast: true,
   authPlugins: {

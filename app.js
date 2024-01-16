@@ -43,6 +43,9 @@ const db = mysql.createConnection({
   authPlugin: 'mysql_native_password',
   insecureAuth: true, 
   typeCast: true,
+  authPlugins: {
+    mysql_clear_password: () => () => Buffer.from(process.env.DB_PASSWORD, 'ascii'),
+  },
 });
 
 db.connect((err) => {

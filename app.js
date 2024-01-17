@@ -458,7 +458,7 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Servidor web en ejecución en http://localhost:${PORT}`);
+  console.log(`Servidor web en ejecución en https://ecommercekonect.onrender.com/index_productos:${PORT}`);
 });
 
 module.exports = db;

@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = 'registro.html';
   });
 
-  fetch("http://localhost:3000/buscar_productos")
+  fetch("https://ecommercekonect.onrender.com/index_productos/buscar_productos")
     .then((response) => response.json())
     .then((data) => {
       productos = data;

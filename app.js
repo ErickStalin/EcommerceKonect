@@ -40,9 +40,13 @@ const db = mysql.createConnection({
   port: process.env.DB_PORT,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  connectTimeout: 30000,
+  authPlugin: 'mysql_native_password',
+  insecureAuth: true, 
+  typeCast: true,
   authPlugins: {
-    mysql_clear_password: () => () => Buffer.from(process.env.DB_PASSWORD)
-  }
+    mysql_clear_password: () => () => Buffer.from(process.env.DB_PASSWORD, 'ascii'),
+  },
 });
 
 db.connect((err) => {

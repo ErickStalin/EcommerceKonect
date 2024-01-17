@@ -1,6 +1,22 @@
-document.getElementById('cerrarSesionBtn').addEventListener('click', function() {
-  window.location.href = '/index_productos.html';
+document.getElementById('cerrarSesionBtn').addEventListener('click', async function() {
+  try {
+    const response = await fetch("/cerrar-sesion", {
+      method: "GET",
+    });
+
+    if (response.status === 200) {
+      // Sesión cerrada exitosamente, redirigir a la página de inicio
+      window.location.href = '/index_productos.html';
+    } else {
+      console.error("Error al cerrar sesión");
+      // Manejar el error según sea necesario
+    }
+  } catch (error) {
+    console.error("Error al cerrar sesión: " + error.message);
+    // Manejar el error según sea necesario
+  }
 });
+
 document.addEventListener("DOMContentLoaded", () => {
   const productosDiv = document.querySelector(".catalogo");
   const pageList = document.querySelector(".page-list");
@@ -64,7 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
           const codigoProducto = obtenerCodigoProducto(event);
 
           if (codigoProducto) {
-            // Redirigir a la página del formulario de actualización con el ID del producto
             window.location.href = `/editar_producto/${codigoProducto}`;
           }
         });
@@ -79,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
           showProductsOnPage(currentPage, currentCategoriaFiltro);
         }
       
-        // Evento click para el botón de eliminar producto
         const eliminarButton = document.createElement("button");
         eliminarButton.textContent = "ELIMINAR";
         eliminarButton.addEventListener("click", (event) => {
@@ -104,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 .then((data) => {
                   console.log("Producto eliminado correctamente", data);
                   alert("Producto eliminado con éxito");
-                  eliminarProductoDeLista(codigoProducto); // Eliminar producto de la lista en memoria
+                  eliminarProductoDeLista(codigoProducto); 
                 })
                 .catch((error) => {
                   console.error("Hubo un problema al eliminar el producto", error);
@@ -115,8 +129,8 @@ document.addEventListener("DOMContentLoaded", () => {
         productoDiv.appendChild(imagen);
         productoDiv.appendChild(nombre);
         productoDiv.appendChild(CodigoProducto);
-        productoDiv.appendChild(editarButton); // Agregar el botón de editar al div del producto
-        productoDiv.appendChild(eliminarButton); // Agregar el botón de eliminar al div del producto
+        productoDiv.appendChild(editarButton); 
+        productoDiv.appendChild(eliminarButton); 
         productosDiv.appendChild(productoDiv);
       });
   }

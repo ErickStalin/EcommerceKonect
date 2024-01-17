@@ -42,6 +42,8 @@ document.getElementById("login-form").addEventListener("submit", async function 
             window.location.href = "/edicion";
             const data = await response.json();
             console.log(data.mensaje); // Mensaje del servidor
+            // Eliminar la cookie de sesión
+            document.cookie = "connect.sid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             // Puedes redirigir al usuario a la página de inicio de sesión exitoso o realizar otras acciones necesarias aquí.
         } else if (response.status === 401) {
             // Si las credenciales son incorrectas, mostrar un mensaje de error

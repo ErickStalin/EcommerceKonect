@@ -11,7 +11,8 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const PDFDocument = require('pdfkit');
-
+const session = require('express-session');
+const nocache = require('nocache');
 
 // Configuración de Handlebars
 const hbs = exphbs.create({ extname: "hbs", defaultLayout: "layout" });
@@ -25,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json()); 
 app.use(cors());
 app.get('/favicon.ico', (req, res) => res.status(204));
-
+app.use('/index_productos.html', nocache());
 // Configuración de Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -39,13 +40,9 @@ const db = mysql.createConnection({
   port: process.env.DB_PORT,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  connectTimeout: 30000,
-  authPlugin: 'mysql_native_password',
-  insecureAuth: true, 
-  typeCast: true,
   authPlugins: {
-    mysql_clear_password: () => () => Buffer.from(process.env.DB_PASSWORD, 'ascii'),
-  },
+    mysql_clear_password: () => () => Buffer.from(process.env.DB_PASSWORD)
+  }
 });
 
 db.connect((err) => {
@@ -168,7 +165,7 @@ app.get("/editar_producto/:id", (req, res) => {
       console.error("Error al obtener datos del producto:", err);
       res.status(500).json({ error: "Error al obtener datos del producto." });
     } else {
-      const producto = results[0]; // Suponiendo que obtienes solo un resultado
+      const producto = results[0]; 
       res.render("editar_producto.hbs", { productId, producto });
     }
   });
@@ -452,6 +449,31 @@ app.post("/verificar-credenciales", (req, res) => {
           res.status(401).json({ mensaje: "Credenciales incorrectas" });
       }
   });
+});
+
+app.use(session({
+  secret: '5475c1cfcc2c94df85f7f816da93c9598dda8d26079d5ab3e34071a5ff235302',
+  resave: false,
+  saveUninitialized: true
+}));
+
+app.get("/cerrar-sesion", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Error al cerrar sesión: " + err.message);
+      res.status(500).json({ mensaje: "Error al cerrar sesión" });
+    } else {
+      res.clearCookie("connect.sid"); 
+      res.header("Cache-Control", "no-store, must-revalidate");
+      res.redirect("/index_productos.html");
+    }
+  });
+});
+
+
+app.use((req, res, next) => {
+  console.log(req.session);
+  next();
 });
 
 app.use((err, req, res, next) => {

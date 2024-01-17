@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  fetch("http://localhost:3000/buscar_productos")
+  fetch("https://ecommercekonect-production.up.railway.app/buscar_productos")
     .then((response) => response.json())
     .then((data) => {
       productos = data;

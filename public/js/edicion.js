@@ -1,20 +1,5 @@
 document.getElementById('cerrarSesionBtn').addEventListener('click', async function() {
-  try {
-    const response = await fetch("/cerrar-sesion", {
-      method: "GET",
-    });
-
-    if (response.status === 200) {
-      // Sesión cerrada exitosamente, redirigir a la página de inicio
-      window.location.href = '/index_productos.html';
-    } else {
-      console.error("Error al cerrar sesión");
-      // Manejar el error según sea necesario
-    }
-  } catch (error) {
-    console.error("Error al cerrar sesión: " + error.message);
-    // Manejar el error según sea necesario
-  }
+  window.location.href = '/index_productos.html';
 });
 
 document.addEventListener("DOMContentLoaded", () => {

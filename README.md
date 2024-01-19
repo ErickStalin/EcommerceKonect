@@ -49,10 +49,6 @@ Descripción del sistema de login proporcionado por la gerencia.
 ![image](https://github.com/ErickStalin/EcommerceKonect/assets/117753868/d6848386-614b-4aea-977e-df1577d36655)
 
 
-## Generación de Facturas e Instructivos de Pago
-Las facturas se generan automaticamente al hacer la compra y se le redirije al usuario a una vista del instructivos de pago.
-![image](https://github.com/ErickStalin/EcommerceKonect/assets/117753868/6511f6ad-ce99-42f2-882e-806eb23ac00c)
-
 
 ## Manual de Instalación
 

@@ -11,10 +11,9 @@ Bienvenido al sistema web que se centra en la experiencia de compra y gestión e
 6. [Área de Administración](#área-de-administración)
 7. [Login y Gestión de Sesiones](#login-y-gestión-de-sesiones)
 8. [Generación de Facturas e Instructivos de Pago](#generación-de-facturas-e-instructivos-de-pago)
-9. [Integración de Mapas](#integración-de-mapas)
-10. [Pruebas del Sistema](#pruebas-del-sistema)
-11. [Instalación del Proyecto](#instalación-del-proyecto)
-12. [Uso de la Base de Datos en Railway](#uso-de-la-base-de-datos-en-railway)
+9. [Instalación del Proyecto](#instalación-del-proyecto)
+10. [Uso de la Base de Datos en Railway](#uso-de-la-base-de-datos-en-railway)
+11. [Manual de Instalación](#manual de instalación)
 
 ## Sección de Inicio
 Apartado inicial donde se pueden ver los productos del mes y ademas las marcas y servicios que ofrece Konect.

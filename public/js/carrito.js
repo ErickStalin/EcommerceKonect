@@ -6,9 +6,12 @@ window.onload = () => {
   let totalAPagar = 0;
 
   if (productosEnCarrito.length > 0) {
-    productosEnCarrito.forEach(producto => {
-      const productoElement = document.createElement('p');
-      productoElement.textContent = `Nombre: ${producto.nombre}, Precio: ${producto.precio}, Cantidad: ${producto.cantidad}`;
+    productosEnCarrito.forEach((producto, index) => { 
+      const productoElement = document.createElement('div');
+      productoElement.innerHTML = `
+        <p>Nombre: ${producto.primeraPalabra}, Precio: ${producto.precio}, Cantidad: ${producto.cantidad}</p>
+        <span class="eliminar-producto" data-index="${index}">🗑️</span>
+      `;
       carritoContainer.appendChild(productoElement);
 
       totalAPagar += parseFloat(producto.precio) * parseInt(producto.cantidad);
@@ -23,7 +26,18 @@ window.onload = () => {
   totalAPagarElement.textContent = `Total a Pagar: $${totalAPagar.toFixed(2)}`;
 
   const pagarAhoraBtn = document.getElementById('pagarAhora');
+  const seguirComprandoBtn = document.getElementById('seguirComprando');
   const formularioFactura = document.getElementById('formularioFactura');
+
+  // Evento para eliminar productos del carrito
+  carritoContainer.addEventListener('click', (event) => {
+    if (event.target.classList.contains('eliminar-producto')) {
+      const productoIndex = event.target.dataset.index;
+      productosEnCarrito.splice(productoIndex, 1);
+      localStorage.setItem('productosEnCarrito', JSON.stringify(productosEnCarrito));
+      location.reload();
+    }
+  });
 
   pagarAhoraBtn.addEventListener('click', () => {
     formularioFactura.style.display = 'block';
@@ -35,12 +49,11 @@ window.onload = () => {
       const nombre = document.getElementById('nombre').value;
       const direccion = document.getElementById('direccion').value;
       const correo = document.getElementById('correo').value;
+      const identificacion = document.getElementById('identificacion').value;
     
-      // Obtener datos del carrito del local storage
       let productosEnCarrito = localStorage.getItem('productosEnCarrito');
       productosEnCarrito = productosEnCarrito ? JSON.parse(productosEnCarrito) : [];
     
-      // Calcular el total a pagar
       let totalAPagar = 0;
       productosEnCarrito.forEach(producto => {
         totalAPagar += parseFloat(producto.precio) * parseInt(producto.cantidad);
@@ -52,7 +65,7 @@ window.onload = () => {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ nombre, direccion, correo, productosEnCarrito, totalAPagar }) // Enviar productos y total a pagar al servidor
+          body: JSON.stringify({ nombre, direccion, correo, identificacion, productosEnCarrito, totalAPagar })
         });
     
         if (!response.ok) {
@@ -67,5 +80,8 @@ window.onload = () => {
         alert('Hubo un error al enviar la factura');
       }
     });
+  });
+  seguirComprandoBtn.addEventListener('click', () => {
+    window.location.href = 'index_productos.html';
   });
 };

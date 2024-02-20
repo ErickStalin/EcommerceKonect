@@ -1,9 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   const agregarAlCarritoBtn = document.getElementById("agregarAlCarrito");
   const carritoBtn = document.getElementById("carritoBtn");
+  const atrasBtn = document.getElementById("atrasBtn");
 
   carritoBtn.addEventListener("click", () => {
-    window.location.href = "/carrito"; // Redirige a la página del carrito
+    window.location.href = "/carrito";
+  });
+
+  atrasBtn.addEventListener("click", () => {
+    window.location.href = "/index_productos";
   });
 
   if (agregarAlCarritoBtn) {
@@ -11,20 +16,20 @@ document.addEventListener("DOMContentLoaded", () => {
       const nombre = document.getElementById("nombreProducto").textContent;
       const precio = document.getElementById("precioProducto").textContent;
       const cantidad = document.getElementById("cantidad").value;
+      const primeraPalabra = obtenerPrimerasPalabras(nombre, 10);
 
       const productoAgregado = {
         nombre: nombre,
         precio: precio,
-        cantidad: cantidad
+        cantidad: cantidad,
+        primeraPalabra: primeraPalabra
       };
 
       let productosEnCarrito = localStorage.getItem('productosEnCarrito');
       productosEnCarrito = productosEnCarrito ? JSON.parse(productosEnCarrito) : [];
 
-      // Agregar el nuevo producto a la lista existente de productos en el carrito
       productosEnCarrito.push(productoAgregado);
 
-      // Actualizar el localStorage con la lista actualizada de productos en el carrito
       localStorage.setItem('productosEnCarrito', JSON.stringify(productosEnCarrito));
 
       alert("Producto agregado al carrito");
@@ -33,3 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("El botón 'agregarAlCarrito' no se encuentra en el documento");
   }
 });
+
+function obtenerPrimerasPalabras(texto, n) {
+  const palabras = texto.split(' ');
+  return palabras.slice(0, n).join(' ');
+}

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen de Ventas</title>
+    <style>
+        /* Estilos para el contenedor principal */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Estilos para los botones */
+        .button-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        /* Estilos para la tabla */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Estilos para el botón de salir */
+        .boton-salir {
+            display: block;
+            width: 200px;
+            margin: 0 auto;
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #dc3545; /* Rojo */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Tabla de resumen de ventas -->
+        <h2>Resumen de Ventas</h2>
+        <table id="tabla-ventas">
+            <thead>
+                <tr>
+                    <th>Número de Factura</th>
+                    <th>Nombre Cliente</th>
+                    <th>Número de Identificación</th>
+                    <th>Nombre Producto</th>
+                    <th>Total a Pagar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se insertarán las filas de la tabla con datos de la base de datos -->
+            </tbody>
+        </table>
+
+        <!-- Botón de salir -->
+        <button class="boton-salir" onclick="salir()">Salir</button>
+    </div>
+
+    <!-- Scripts opcionales -->
+    <script>
+        // Función para redirigir a la página index_productos.html
+        function salir() {
+            window.location.href = 'index_productos.html';
+        }
+
+        // Función para cargar datos de la tabla de resumen de ventas
+        async function cargarDatosTabla() {
+            try {
+                const response = await fetch('/obtener-resumen-ventas');
+                if (response.ok) {
+                    const data = await response.json();
+                    const tablaBody = document.querySelector('#tabla-ventas tbody');
+                    tablaBody.innerHTML = '';
+                    data.forEach((venta) => {
+                        const fila = document.createElement('tr');
+                        fila.innerHTML = `
+                            <td>${venta.numero_factura}</td>
+                            <td>${venta.nombre_cliente}</td>
+                            <td>${venta.numero_identificacion}</td>
+                            <td>${venta.nombre_productos}</td>
+                            <td>${venta.total_pagar}</td>
+                        `;
+                        tablaBody.appendChild(fila);
+                    });
+                } else {
+                    console.error('Error al cargar datos de la tabla');
+                }
+            } catch (error) {
+                console.error('Error al cargar datos de la tabla:', error);
+            }
+        }
+
+        // Cargar datos de la tabla al cargar la página
+        document.addEventListener('DOMContentLoaded', cargarDatosTabla);
+    </script>
+</body>
+</html>

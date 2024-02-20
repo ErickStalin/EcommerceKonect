@@ -30,8 +30,34 @@
                 <button type="submit">Iniciar Sesión</button>
             </div>
         </form>
-        <p><a href="#">¿Olvidaste tu contraseña?</a></p>
-        <p>Solicitar credenciales a <a href="registro.html">gerencia</a></p>
+        <p><a href="#" id="forgot-password-link">¿Olvidaste tu contraseña?</a></p>
+        <div id="forgot-password-form" style="display: none;">
+            <label for="emails">Selecciona tu correo:</label>
+            <select id="emails">
+                <!-- Aquí se cargarán los correos -->
+            </select>
+            <button onclick="sendPasswordResetEmail()">Enviar</button>
+        </div>
+        <p>Solicitar credenciales a <a href="#" id="request-credentials-link">gerencia</a></p>
+        <div id="request-credentials-form" style="display: none;" class="gerencia-form">
+            <form id="gerencia-request-form" onsubmit="sendCredentialsRequest(); return false;">
+                <div class="form-group">
+                    <label for="identificacion">Número de identificación:</label>
+                    <input type="text" id="identificacion" required>
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="motivo">Motivo:</label>
+                    <input type="text" id="motivo" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Enviar</button>
+                </div>
+            </form>
+        </div>
     </div>
     <script src="./js/registro.js"></script>
 </body>

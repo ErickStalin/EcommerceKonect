@@ -61,7 +61,14 @@ body {
   color: #fff;
 }
 
-.loginProductos {
+.login-container {
+  display: flex;
+  justify-content: flex-end; /* Alinea los elementos al final del contenedor */
+  padding: 10px; /* Agrega espacio alrededor de los botones de login */
+}
+
+.loginProductos,
+.loginGestion {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -73,4 +80,10 @@ body {
   border: none;
   cursor: pointer;
   font-size: 24px;
+  margin-left: 10px; /* Agrega espacio entre los botones de login */
+}
+
+/* Mueve el botón de loginGestion hacia la derecha */
+.loginGestion {
+  margin-left: auto;
 }

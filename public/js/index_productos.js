@@ -75,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
           window.location.href = `/detalles_producto/${producto.CodigoProducto}`;
         });
 
-
         productoDiv.appendChild(imagen);
         productoDiv.appendChild(nombre);
         productoDiv.appendChild(CodigoProducto);
@@ -104,11 +103,18 @@ document.addEventListener("DOMContentLoaded", () => {
       pageList.appendChild(pageButton);
     }
   }
+  
   const loginButton = document.querySelector('.loginProductos');
+  const gestionButton = document.querySelector('.loginGestion');
 
-  // Agrega un evento clic al botón
+  // Agrega un evento clic al botón de login
   loginButton.addEventListener('click', () => {
       window.location.href = 'registro.html';
+  });
+
+  // Agrega un evento clic al botón de gestión
+  gestionButton.addEventListener('click', () => {
+      window.location.href = 'registro2.html'; // Redirige al usuario a la página de gestión
   });
 
   fetch("https://ecommercekonect-production.up.railway.app/buscar_productos")

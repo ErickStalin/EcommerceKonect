@@ -12,7 +12,6 @@ const fs = require('fs');
 const multer = require('multer');
 const PDFDocument = require('pdfkit');
 
-
 // Configuración de Handlebars
 const hbs = exphbs.create({ extname: "hbs", defaultLayout: "layout" });
 app.set("view engine", "hbs");
@@ -288,114 +287,167 @@ app.get("/carrito", (req, res) => {
 });
 
 app.post('/enviar-factura', async (req, res) => {
-  const { nombre, direccion, correo, productosEnCarrito, totalAPagar } = req.body;
+  const { nombre, direccion, correo, identificacion, productosEnCarrito, totalAPagar } = req.body;
 
-  const doc = new PDFDocument();
-
-  // Añadir logo al encabezado
-  const logoPath = path.join(__dirname, './public/logo.png');
-  doc.image(logoPath, 450, 45, { width: 150 });
-
-  // Encabezado personalizado (alineado a la izquierda)
-  doc.fontSize(20).text('Konect Soluciones', 50, 57); // Ajusta la coordenada x según tu preferencia
-
-  // Información del cliente (alineada a la izquierda)
-  doc.moveDown(0.5);
-  doc.fontSize(12).text(`Factura para: ${nombre}`, { align: 'left' });
-  doc.text(`Dirección: ${direccion}`, { align: 'left' });
-
-  // Detalles de la compra (alineados a la izquierda)
-  doc.moveDown(1);
-  doc.fontSize(12).text('Detalles de la compra:', { align: 'left' });
-
-  // Encabezado de la tabla
-  doc.moveDown(0.5);
-  doc.fontSize(10);
-  const detallesCompraY = doc.y; // Guarda la posición actual Y para los detalles de la compra
-  doc.lineJoin('miter').rect(50, detallesCompraY, 500, 20).stroke(); // Línea superior de la tabla
-  doc.text('Producto', 60, detallesCompraY + 3);
-  doc.text('Precio', 300, detallesCompraY + 3, { width: 100, align: 'right' });
-  doc.text('Cantidad', 450, detallesCompraY + 3, { width: 50, align: 'right' });
-  doc.moveDown(0.5);
-
-  const productosImprimir = productosEnCarrito.slice(0, 10);
-
-  productosImprimir.forEach((producto, index) => {
-    const { nombre, precio, cantidad } = producto;
-  
-    // Calcular la posición Y en función del índice
-    const yPosition = detallesCompraY + 20 + index * 20;
-  
-    console.log(`Producto: ${nombre}, Precio: ${precio}, Cantidad: ${cantidad}`); // Agregado para depuración
-  
-    // Columna de Nombre (ajustar el ancho y truncar si es necesario)
-    const maxNombreLength = 25; // Establece la longitud máxima permitida para el nombre
-    const truncatedNombre = nombre.length > maxNombreLength ? nombre.substring(0, maxNombreLength) + '...' : nombre;
-  
-    // Convertir precio a número antes de formatearlo
-    const precioNumerico = parseFloat(precio);
-  
-    // Verificar si el precio es un número válido
-    if (!isNaN(precioNumerico)) {
-      // Fila de datos
-      doc.text(`${truncatedNombre}`, 60, yPosition)
-        .text(`$${precioNumerico.toFixed(2)}`, 300, yPosition, { width: 100, align: 'right' })
-        .text(`${cantidad.toString()}`, 450, yPosition, { width: 50, align: 'right' });
-    } else {
-      // Si el precio no es un número, imprímelo para depuración
-      console.log(`Precio inválido en el producto: ${nombre}, Tipo: ${typeof precio}`);
+  // Después de enviar el correo, insertar la factura en la base de datos
+  const nombresProductos = productosEnCarrito.map(producto => producto.nombre).join(', ');
+  const query = "INSERT INTO factura (nombre_cliente, numero_identificacion, nombre_productos, total_pagar) VALUES (?, ?, ?, ?)";
+  db.query(query, [nombre, identificacion, nombresProductos, totalAPagar], async (err, result) => {
+    if (err) {
+      console.error('Error al insertar en la base de datos:', err);
+      res.status(500).json({ message: 'Error al guardar la factura en la base de datos' });
+      return;
     }
-  });
 
-  // Total a pagar
-  doc.moveDown(1.5);
-  doc.text(`Total a Pagar: $${totalAPagar.toFixed(2)}`, { align: 'right' });
+    // Obtener el número de factura
+    const numeroFactura = result.insertId;
 
+    // Crear el PDF
+    const doc = new PDFDocument();
 
-  // Generar el PDF y guardar en una variable de tipo buffer
-  const pdfBuffer = await new Promise(resolve => {
-    const buffers = [];
-    doc.on('data', buffers.push.bind(buffers));
-    doc.on('end', () => {
-      const pdfData = Buffer.concat(buffers);
-      resolve(pdfData);
+    // Añadir logo al encabezado
+    const logoPath = path.join(__dirname, './public/logo.png');
+    doc.image(logoPath, 450, 45, { width: 150 });
+
+    // Encabezado personalizado (alineado a la izquierda)
+    doc.fontSize(20).text('Konect Soluciones', 50, 57);
+
+    // Información del cliente (alineada a la izquierda)
+    doc.moveDown(0.5);
+    doc.fontSize(12).text(`Factura para: ${nombre}`, { align: 'left' });
+    doc.text(`Dirección: ${direccion}`, { align: 'left' });
+
+    // Número de factura
+    doc.text(`Número de Factura: ${numeroFactura}`, { align: 'left' });
+
+    // Detalles de la compra (alineados a la izquierda)
+    doc.moveDown(1);
+    doc.fontSize(12).text('Detalles de la compra:', { align: 'left' });
+
+    // Encabezado de la tabla
+    doc.moveDown(0.5);
+    doc.fontSize(10);
+    const detallesCompraY = doc.y; // Guarda la posición actual Y para los detalles de la compra
+    doc.lineJoin('miter').rect(50, detallesCompraY, 500, 20).stroke(); // Línea superior de la tabla
+    doc.text('Producto', 60, detallesCompraY + 3);
+    doc.text('Precio', 300, detallesCompraY + 3, { width: 100, align: 'right' });
+    doc.text('Cantidad', 450, detallesCompraY + 3, { width: 50, align: 'right' });
+    doc.moveDown(0.5);
+
+    const productosImprimir = productosEnCarrito.slice(0, 10);
+
+    productosImprimir.forEach((producto, index) => {
+      const { nombre, precio, cantidad } = producto;
+
+      // Calcular la posición Y en función del índice
+      const yPosition = detallesCompraY + 20 + index * 20;
+
+      // Columna de Nombre (ajustar el ancho y truncar si es necesario)
+      const maxNombreLength = 25; // Establece la longitud máxima permitida para el nombre
+      const truncatedNombre = nombre.length > maxNombreLength ? nombre.substring(0, maxNombreLength) + '...' : nombre;
+
+      // Convertir precio a número antes de formatearlo
+      const precioNumerico = parseFloat(precio);
+
+      // Verificar si el precio es un número válido
+      if (!isNaN(precioNumerico)) {
+        // Fila de datos
+        doc.text(`${truncatedNombre}`, 60, yPosition)
+          .text(`$${precioNumerico.toFixed(2)}`, 300, yPosition, { width: 100, align: 'right' })
+          .text(`${cantidad.toString()}`, 450, yPosition, { width: 50, align: 'right' });
+      } else {
+        // Si el precio no es un número, imprímelo para depuración
+        console.log(`Precio inválido en el producto: ${nombre}, Tipo: ${typeof precio}`);
+      }
     });
-    doc.end();
-  });
 
-  // Configuración del servicio de correo
+    // Total a pagar
+    doc.moveDown(1.5);
+    doc.text(`Total a Pagar: $${totalAPagar.toFixed(2)}`, { align: 'right' });
+
+    // Generar el PDF y guardar en una variable de tipo buffer
+    const pdfBuffer = await new Promise(resolve => {
+      const buffers = [];
+      doc.on('data', buffers.push.bind(buffers));
+      doc.on('end', () => {
+        const pdfData = Buffer.concat(buffers);
+        resolve(pdfData);
+      });
+      doc.end();
+    });
+
+    // Configuración del servicio de correo
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD
+      }
+    });
+
+    // Envío del correo con la factura adjunta
+    transporter.sendMail({
+      from: `Konect Soluciones: ${process.env.EMAIL}`,
+      to: correo,
+      subject: 'Factura de compra',
+      text: `Hola ${nombre}, adjuntamos la factura de tu compra. Gracias por tu compra.`,
+      attachments: [{
+        filename: 'factura.pdf',
+        content: pdfBuffer,
+        contentType: 'application/pdf'
+      }]
+    }, (error, info) => {
+      if (error) {
+        console.error('Error al enviar el correo:', error);
+        res.status(500).json({ message: 'Error al enviar la factura por correo electrónico' });
+      } else {
+        console.log('Correo enviado:', info.response);
+        console.log('Factura guardada en la base de datos');
+        res.status(200).json({ message: 'Factura enviada exitosamente por correo electrónico' });
+      }
+    });
+  });
+});
+
+
+
+app.post('/solicitar-credenciales', (req, res) => {
+  // Definir el transporte de nodemailer
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
     secure: false,
     auth: {
-      user: process.env.EMAIL,
-      pass: process.env.EMAIL_PASSWORD
+      user: process.env.EMAIL, // Coloca tu dirección de correo electrónico
+      pass: process.env.EMAIL_PASSWORD // Coloca tu contraseña de correo electrónico
     }
   });
 
-  // Envío del correo con la factura adjunta
+  // Obtener los datos de la solicitud del cuerpo del mensaje
+  const { nombre, identificacion, motivo } = req.body;
+
+  // Envío del correo con los detalles de la solicitud de credenciales
   transporter.sendMail({
     from: `Konect Soluciones: ${process.env.EMAIL}`,
-    to: correo,
-    subject: 'Factura de compra',
-    text: `Hola ${nombre}, adjuntamos la factura de tu compra. Gracias por tu compra.`,
-    attachments: [{
-      filename: 'factura.pdf',
-      content: pdfBuffer,
-      contentType: 'application/pdf'
-    }]
+    to: 'konectsoftware8@gmail.com', // Dirección de correo del destinatario (gerencia)
+    subject: 'Solicitud de Credenciales para Modo de Edición',
+    text: `Se ha recibido una solicitud de credenciales para el modo de edición:\n\n
+           Usuario: ${nombre}\n
+           Identificación: ${identificacion}\n
+           Motivo: ${motivo}\n\n
+           Por favor, proporciona las credenciales necesarias. Gracias.`
   }, (error, info) => {
     if (error) {
       console.error('Error al enviar el correo:', error);
-      res.status(500).json({ message: 'Error al enviar la factura por correo electrónico' });
+      res.status(500).json({ message: 'Error al enviar la solicitud de credenciales por correo electrónico' });
     } else {
       console.log('Correo enviado:', info.response);
-      res.status(200).json({ message: 'Factura enviada exitosamente por correo electrónico' });
+      res.status(200).json({ message: 'Solicitud de credenciales enviada exitosamente por correo electrónico' });
     }
   });
 });
-
 
 
 app.get('/confirmacion', (req, res) => {
@@ -449,16 +501,71 @@ app.post("/verificar-credenciales", (req, res) => {
   });
 });
 
+//admin
+function verificarCredenciales2(email, contraseña, callback) {
+  // Consultar la base de datos
+  const query = "SELECT * FROM usuarios2 WHERE email = ? AND contraseña = ?";
+  db.query(query, [email, contraseña], (error, resultados) => {
+      if (error) {
+          console.error("Error en la consulta: " + error.message);
+          callback(false);
+      } else {
+          // Verificar si se encontraron resultados en la consulta
+          if (resultados.length > 0) {
+              callback(true); // Credenciales válidas
+          } else {
+              callback(false); // Credenciales inválidas
+          }
+      }
+  });
+}
+
+// Definir la ruta para verificar las credenciales
+app.post("/verificar-credenciales2", (req, res) => {
+  // Obtener las credenciales del cuerpo de la solicitud
+  const { email, contraseña } = req.body;
+
+  // Llamar a la función verificarCredenciales de manera asincrónica
+  verificarCredenciales2(email, contraseña, (autenticado) => {
+      if (autenticado) {
+          res.status(200).json({ mensaje: "Inicio de sesión exitoso" });
+      } else {
+          res.status(401).json({ mensaje: "Credenciales incorrectas" });
+      }
+  });
+});
+
+app.get('/admin', (req, res) => {
+  res.render('admin'); // Renderiza la vista de administrador
+});
+
+// Ruta para obtener el resumen de ventas desde la base de datos
+app.get('/obtener-resumen-ventas', (req, res) => {
+  const query = 'SELECT * FROM factura';
+
+  // Ejecutar la consulta SQL
+  db.query(query, (error, results) => {
+    if (error) {
+      console.error('Error al ejecutar la consulta: ' + error.message);
+      res.status(500).json({ error: 'Error interno del servidor' });
+      return;
+    }
+    res.json(results); // Enviar los resultados como respuesta
+
+  });
+});
+
+
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('¡Algo salió mal!');
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.DB_PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Servidor web en ejecución en https://ecommercekonect.onrender.com/index_productos:${PORT}`);
+  console.log(`Servidor web en ejecución en https://ecommercekonect-production.up.railway.app:${PORT}`);
 });
 
 module.exports = db;

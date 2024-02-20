@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" href="logoPrincipal.png" type="image/png">
+    <link rel="stylesheet" href="./css/resgitro2.css" />
+</head>
+<body>
+    <div class="login-container">
+        <h2>Iniciar Sesión</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Correo Administrativo:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="contraseña" id="contraseña-label">Contraseña:</label>
+                <div class="password-container">
+                    <input type="password" id="contraseña" name="contraseña" required>
+                    <span id="toggle-password" class="eye" onclick="togglePasswordVisibility()">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+            </div>                                               
+            <div class="form-group">
+                <button type="submit">Iniciar Sesión</button>
+            </div>
+        </form>
+    </div>
+    <script src="./js/registro2.js"></script>
+</body>
+</html>

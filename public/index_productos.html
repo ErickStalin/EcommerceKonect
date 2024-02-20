@@ -15,7 +15,7 @@
             .then(data => {
                 document.querySelector('body').insertAdjacentHTML('afterbegin', data);
             });
-      </script>
+    </script>
 
     <!-- Tu contenido restante del catálogo -->
     <label for="categoria">Selecciona una categoría:</label>
@@ -30,12 +30,17 @@
             <!-- ... -->
         </ul>
     </div>
-    <button class="loginProductos">
-        <i class="fas fa-sign-in-alt"></i>
-    </button>
+
+    <!-- Contenedor para los botones de login -->
+    <div class="login-container">
+        <button class="loginProductos">
+            <i class="fas fa-sign-in-alt"></i>
+        </button>
+        <button class="loginGestion">
+            <i class="fas fa-user"></i>
+        </button>
+    </div>
+
     <script src="./js/index_productos.js"></script>
 </body>
 </html>
-
-
-

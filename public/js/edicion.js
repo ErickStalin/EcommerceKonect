@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  fetch("https://ecommercekonect-production.up.railway.app:19658//buscar_productos")
+  fetch("ecommercekonect-production.up.railway.app/buscar_productos")
     .then((response) => response.json())
     .then((data) => {
       productos = data;

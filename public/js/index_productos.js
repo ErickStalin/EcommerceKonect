@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const itemsPerPage = 16;
   let currentPage = 1;
   let productos = [];
-  let productosEnCarrito = [];
   let currentCategoriaFiltro = "Todas";
   let isScrolling = false;
 
@@ -117,8 +116,13 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = 'registro2.html'; // Redirige al usuario a la página de gestión
   });
 
-  fetch("ecommercekonect-production.up.railway.app/buscar_productos")
-    .then((response) => response.json())
+  fetch("https://ecommercekonect.onrender.com/buscar_productos")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
     .then((data) => {
       productos = data;
       showProductsOnPage(currentPage, currentCategoriaFiltro);

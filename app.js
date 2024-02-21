@@ -565,7 +565,7 @@ app.use((err, req, res, next) => {
 const PORT = process.env.DB_PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Servidor web en ejecución en ecommercekonect-production.up.railway.app:${PORT}`);
+  console.log(`Servidor web en ejecución en https://ecommercekonect.onrender.com:${PORT}`);
 });
 
 module.exports = db;
